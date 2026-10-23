@@ -11,6 +11,7 @@ Try: `make train CONFIG=experiments/configs/m0/smoke.yaml` (50 steps, a few minu
 
 from __future__ import annotations
 
+import itertools
 import json
 import os
 import time
@@ -24,10 +25,23 @@ from sqltune.config.models import AppConfig
 ASSISTANT_HEADER = "<|im_start|>assistant\n"
 
 
+def _sequences(batch: dict[str, Any]) -> list[tuple[list[int], list[int]]]:
+    """(input_ids, labels) per example; padding-free batches pack several examples into one
+    row, and their position_ids restart at 0 where each example begins."""
+    rows = zip(batch["input_ids"].tolist(), batch["labels"].tolist(), strict=True)
+    if "position_ids" not in batch:
+        return list(rows)
+    out = []
+    for (ids, labels), pos in zip(rows, batch["position_ids"].tolist(), strict=True):
+        starts = [i for i, p in enumerate(pos) if p == 0] + [len(pos)]
+        out += [(ids[a:b], labels[a:b]) for a, b in itertools.pairwise(starts)]
+    return out
+
+
 def check_loss_mask(batch: dict[str, Any], tokenizer: Any) -> None:
     """Fail fast if prompt tokens are not masked (-100) or the completion is masked."""
     header = tokenizer.encode(ASSISTANT_HEADER, add_special_tokens=False)
-    for ids, labels in zip(batch["input_ids"].tolist(), batch["labels"].tolist(), strict=True):
+    for ids, labels in _sequences(batch):
         starts = [
             i for i in range(len(ids) - len(header) + 1) if ids[i : i + len(header)] == header
         ]

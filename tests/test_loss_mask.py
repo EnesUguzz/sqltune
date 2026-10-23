@@ -41,6 +41,20 @@ def test_masked_completion_fails() -> None:
         check_loss_mask(_batch([-100] * 9), FakeTokenizer())
 
 
+def test_packed_row_checked_per_sequence() -> None:
+    """Padding-free batches concatenate examples in one row; position_ids restart at 0."""
+    good = [-100] * 6 + [40, 41, 42]
+    batch = {
+        "input_ids": Rows([IDS + IDS]),
+        "labels": Rows([good + good]),
+        "position_ids": Rows([list(range(9)) + list(range(9))]),
+    }
+    check_loss_mask(batch, FakeTokenizer())
+    batch["labels"] = Rows([good + IDS])  # second sequence trains on its prompt
+    with pytest.raises(AssertionError, match="prompt tokens"):
+        check_loss_mask(batch, FakeTokenizer())
+
+
 def test_missing_header_fails() -> None:
     batch = {"input_ids": Rows([[1, 2, 3]]), "labels": Rows([[-100, -100, 3]])}
     with pytest.raises(AssertionError, match="header"):
