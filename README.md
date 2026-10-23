@@ -3,7 +3,10 @@
 Fine-tuning Qwen2.5-Coder-3B-Instruct for text-to-SQL (SQLite) with QLoRA, served with vLLM and
 measured by execution accuracy on Spider and BIRD Mini-Dev.
 
-> Work in progress (M0: first baseline → QLoRA delta on Spider dev).
+> Work in progress. **M0 result (Spider dev, 1034 questions):** QLoRA SFT lifts
+> Qwen2.5-Coder-3B from **64.2 → 73.6 EX** (+9.4; 151 fixed / 54 broken, McNemar p ≈ 1e-11)
+> after 26 min of training at 3.5 GiB peak VRAM. Details:
+> [docs/decisions/001-m0-first-delta.md](docs/decisions/001-m0-first-delta.md).
 
 ## Environment
 

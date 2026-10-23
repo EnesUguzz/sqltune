@@ -1,0 +1,11 @@
+# M0 fine-tune evaluation: the m0_qlora adapter on the same 1034 dev questions and prompt as
+# the baseline. Serve: `make serve LORA=m0_qlora`. Run: `make eval CONFIG=<this file>`.
+# Note: the adapter was trained on a 4-bit (NF4) base and is served on the bf16 base.
+extends: baseline.yaml
+
+run:
+  run_name: m0_qlora_eval
+  reference_run: m0_baseline   # report shows per-metric delta, fixed/broken, McNemar p
+
+inference:
+  model: sft                   # the LoRA adapter served by vLLM
