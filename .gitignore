@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.superpowers/
+data/
+adapters/
+outputs/
+unsloth_compiled_cache/
+mlruns/
+mlflow.db
+*.part
+.env
+
+# IDE
+.idea/
+.vscode/

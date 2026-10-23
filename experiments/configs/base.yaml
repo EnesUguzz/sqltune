@@ -1,0 +1,16 @@
+# Shared defaults for every experiment. Child files `extends: base.yaml` (or a sibling)
+# and override only what they change. Every field is documented in
+# src/sqltune/config/models.py.
+run:
+  experiment_name: m0      # MLflow experiment = milestone
+  run_name: base           # always overridden by the child file
+
+data:
+  split: dev               # tune and compare on Spider dev; test is run once at the end
+  subset: full             # all 1034 dev questions (minutes on vLLM)
+
+inference:
+  model: base              # vLLM serves the base model under the name "base"
+  temperature: 0.0         # deterministic answers for evaluation
+  max_tokens: 512
+  concurrency: 16

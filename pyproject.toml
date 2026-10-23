@@ -1,0 +1,76 @@
+[project]
+name = "sqltune"
+version = "0.1.0"
+description = "Fine-tuning a small code LLM for text-to-SQL (Spider / BIRD, SQLite), measured end to end."
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "pydantic>=2.9",
+  "pydantic-settings>=2.6",
+  "pyyaml>=6.0",
+  "typer>=0.12",
+  "structlog>=24.4",
+  "tenacity>=9.0",
+  "httpx>=0.27",
+  "openai>=1.50",
+  "mlflow>=3.1",
+  "gdown>=5.2",
+  "numpy>=2.1",
+]
+
+[project.optional-dependencies]
+train = [
+  "torch>=2.9",
+  "unsloth",
+  "trl",
+  "peft",
+  "transformers",
+  "datasets",
+  "bitsandbytes>=0.45",
+  "accelerate",
+]
+
+[project.scripts]
+sqltune = "sqltune.cli:app"
+
+[dependency-groups]
+dev = ["pytest>=8.3", "ruff>=0.8", "mypy>=1.13", "types-PyYAML"]
+
+[tool.uv.sources]
+torch = [{ index = "pytorch-cu130", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cu130"
+url = "https://download.pytorch.org/whl/cu130"
+explicit = true
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/sqltune"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+force-exclude = true
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501"]  # line length is the formatter's job
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "gpu: needs a CUDA GPU",
+  "vllm: needs a running vLLM server",
+  "data: needs the downloaded Spider data",
+]
+addopts = "-m 'not gpu and not vllm and not data'"
