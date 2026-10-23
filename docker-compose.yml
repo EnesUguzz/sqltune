@@ -1,6 +1,8 @@
 # vLLM OpenAI-compatible server for every local model in sqltune.
 # Start with `make serve` (base model) or `make serve LORA=<adapter dir under adapters/>`.
 # Training and this server cannot share the 16 GB GPU: `make serve-down` before `make train`.
+# --generation-config vllm: ignore the model's generation_config.json (Qwen ships
+# repetition_penalty 1.05, top_k 20, top_p 0.8); every model is compared with plain greedy decoding.
 services:
   vllm:
     image: vllm/vllm-openai:v0.31.0   # pinned; Blackwell (sm_120) + LoRA verified in M0 Task 1
@@ -17,6 +19,7 @@ services:
       --served-model-name base
       --max-model-len ${MAX_MODEL_LEN:-4096}
       --gpu-memory-utilization ${GPU_UTIL:-0.80}
+      --generation-config vllm
       --enable-lora
       --max-lora-rank 64
       ${LORA_ARGS:-}
