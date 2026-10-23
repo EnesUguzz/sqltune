@@ -4,9 +4,9 @@ __pycache__/
 .ruff_cache/
 .pytest_cache/
 .superpowers/
-data/
-adapters/
-outputs/
+/data/
+/adapters/
+/outputs/
 unsloth_compiled_cache/
 mlruns/
 mlflow.db
