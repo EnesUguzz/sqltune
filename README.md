@@ -19,31 +19,10 @@ Verified on an RTX 5080 16 GB (Blackwell, sm_120), driver 610.88, WSL2 Ubuntu 24
 | peft | 0.21.2 |
 | vLLM (Docker) | v0.31.0 |
 
- then uv run sqltune check-env
-🦥 Unsloth: Will patch your computer to enable 2x faster free finetuning.
-Unsloth: xformers is installed but cannot load with torch 2.14.1+cu130 (it was built for 2.10.0+cu128), so PyTorch attention is used instead.
-To install a matching xformers, run `unsloth install-kernels xformers`, or `pip uninstall xformers` to hide this. UNSLOTH_ENABLE_LOGGING=1 shows the full error.
-🦥 Unsloth Zoo will now patch everything to make training faster!
-torch           2.14.1+cu130
-torch_cuda      13.0
-cuda_available  True
-device          NVIDIA GeForce RTX 5080
-capability      (12, 0)
-bf16_supported  True
-bf16_matmul_ok  True
-bitsandbytes    0.50.2
-nf4_matmul_ok   True
-unsloth         2026.10.8
-transformers    5.17.0
-trl             1.15.0
-peft            0.21.2
-docker_gpu      failed: mplete
-Digest: sha256:e778509d37d66475120929671500377524f7278478ba08131b07ef3ffcc0dce0
-Status: Downloaded newer image for nvidia/cuda:12.8.0-base-ubuntu24.04
-docker: Error response from daemon: could not select device driver "" with capabilities: [[gpu]]
+Setup: `uv sync --extra train`, then `make check-env`. Unsloth warns that the bundled xformers
+wheel does not match torch 2.14 and falls back to PyTorch SDPA attention; that is harmless.
 
-Run 'docker run --help' for more information. Unsloth warns that the bundled xformers wheel does
-not match torch 2.14 and falls back to PyTorch SDPA attention; that is harmless.
+Docker needs the NVIDIA Container Toolkit for GPU access (`docker_gpu` in `make check-env`).
 
 ## Data
 
