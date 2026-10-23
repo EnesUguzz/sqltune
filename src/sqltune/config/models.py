@@ -176,8 +176,9 @@ class EvalConfig(_Section):
         8,
         ge=1,
         description=(
-            "What: parallel threads executing SQL for scoring. Typical: CPU cores. "
-            "Effect: speed only."
+            "What: parallel worker processes executing SQL for scoring. Typical: CPU cores. "
+            "Effect: speed only. Processes, not threads: SQLite's Python progress handler "
+            "(the timeout) needs the GIL, so threads serialize and heavy queries time out."
         ),
     )
     mlflow_tracking_uri: str = Field(
