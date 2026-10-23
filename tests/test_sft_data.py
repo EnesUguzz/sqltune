@@ -48,6 +48,7 @@ class CharTokenizer:
 
 
 def test_overlong_records_dropped_and_counted(tiny_spider: DataConfig) -> None:
+    pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
     cfg = AppConfig(data=tiny_spider, prompt=PROMPT_CFG, run={"run_name": "t"})
     _, dropped = build_sft_dataset(cfg, CharTokenizer())
     assert dropped == 0
