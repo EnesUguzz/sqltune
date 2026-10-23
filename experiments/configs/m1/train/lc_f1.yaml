@@ -1,0 +1,10 @@
+# M1a training sweep; every file changes only what its name says vs m0/qlora.yaml.
+# learning curve: 100% of train, 1 epoch
+extends: ../../m0/qlora.yaml
+
+run:
+  experiment_name: m1a
+  run_name: lc_f1
+
+training:
+  num_train_epochs: 1

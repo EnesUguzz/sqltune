@@ -4,7 +4,7 @@ LORA ?=
 # Seconds to wait for vLLM to report healthy (first start downloads the model).
 SERVE_WAIT ?= 900
 
-.PHONY: setup test lint format check-env serve serve-down download eval train
+.PHONY: setup test lint format check-env serve serve-down download eval train m1-train
 
 setup:
 	uv sync --extra train
@@ -43,3 +43,13 @@ eval:  ## score a model on Spider: make eval CONFIG=experiments/configs/m0/basel
 train:  ## fine-tune: make train CONFIG=experiments/configs/m0/qlora.yaml (GPU must be free of vLLM)
 	@if curl -fsS localhost:8000/health >/dev/null 2>&1; then echo "vLLM is running and holds the GPU; run make serve-down first"; exit 1; fi
 	uv run --extra train sqltune train --config $(CONFIG)
+
+M1_TRAIN ?= lc_f0125 lc_f025 lc_f05 lc_f1 others ep3 lora16 seed2 seed3
+
+m1-train:  ## M1a training sweep, sequential; a failed run is logged and skipped (~3 h GPU)
+	@mkdir -p outputs
+	@for r in $(M1_TRAIN); do \
+	  echo "=== $$r $$(date +%H:%M)"; \
+	  $(MAKE) --no-print-directory train CONFIG=experiments/configs/m1/train/$$r.yaml > outputs/$$r.log 2>&1 \
+	    && echo "    ok $$(date +%H:%M)" || echo "    FAILED (see outputs/$$r.log)"; \
+	done

@@ -1,0 +1,10 @@
+# M1a training sweep; every file changes only what its name says vs m0/qlora.yaml.
+# 3 epochs instead of 2 (overfitting check)
+extends: ../../m0/qlora.yaml
+
+run:
+  experiment_name: m1a
+  run_name: ep3
+
+training:
+  num_train_epochs: 3
