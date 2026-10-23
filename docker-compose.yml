@@ -16,8 +16,8 @@ services:
       - HF_TOKEN=${HF_TOKEN:-}
     command: >
       --model ${MODEL:-Qwen/Qwen2.5-Coder-3B-Instruct}
-      --served-model-name base
-      --max-model-len ${MAX_MODEL_LEN:-4096}
+      --served-model-name ${SERVED_NAME:-base}
+      --max-model-len ${MAX_MODEL_LEN:-8192}
       --gpu-memory-utilization ${GPU_UTIL:-0.80}
       --generation-config vllm
       --enable-lora

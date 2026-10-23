@@ -98,6 +98,18 @@ def train_(
     typer.echo(f"wrote {train(load_config(config))}")
 
 
+@app.command("summarize")
+def summarize(
+    out: Annotated[Path, typer.Option(help="Markdown file to write.")] = Path("results/SUMMARY.md"),
+    results_dir: Annotated[Path, typer.Option(help="Folder with run folders.")] = Path("results"),
+) -> None:
+    """Write one comparison table over every results/m1_* run."""
+    from sqltune.evaluation.summary import build_summary
+
+    out.write_text(build_summary(results_dir), encoding="utf-8")
+    typer.echo(f"wrote {out}")
+
+
 @app.command("dummy-adapter")
 def dummy_adapter(
     out: Annotated[Path, typer.Option(help="Output folder.")] = Path("adapters/dummy"),

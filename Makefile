@@ -4,7 +4,7 @@ LORA ?=
 # Seconds to wait for vLLM to report healthy (first start downloads the model).
 SERVE_WAIT ?= 900
 
-.PHONY: setup test lint format check-env serve serve-down download eval train m1-train
+.PHONY: setup test lint format check-env serve serve-down download eval train m1-train serve-multi m1-eval summarize
 
 setup:
 	uv sync --extra train
@@ -25,7 +25,7 @@ check-env:  ## torch/CUDA/bitsandbytes/Unsloth + Docker GPU
 	uv run sqltune check-env
 
 serve:  ## vLLM on :8000; `make serve LORA=m0_qlora` also serves adapters/m0_qlora as model "sft"
-	MODEL=$(MODEL) LORA_ARGS="$(if $(LORA),--lora-modules sft=/adapters/$(LORA),)" docker compose up -d vllm
+	MODEL=$(MODEL) SERVED_NAME=$(SERVED_NAME) LORA_ARGS="$(if $(LORA),--lora-modules sft=/adapters/$(LORA),) $(EXTRA_LORA)" docker compose up -d vllm
 	@for i in $$(seq 1 $(SERVE_WAIT)); do \
 	  curl -fsS localhost:8000/health >/dev/null 2>&1 && { echo "vLLM ready"; curl -s localhost:8000/v1/models | python3 -c "import json,sys; print([m['id'] for m in json.load(sys.stdin)['data']])"; exit 0; }; \
 	  sleep 1; \
@@ -53,3 +53,22 @@ m1-train:  ## M1a training sweep, sequential; a failed run is logged and skipped
 	  $(MAKE) --no-print-directory train CONFIG=experiments/configs/m1/train/$$r.yaml > outputs/$$r.log 2>&1 \
 	    && echo "    ok $$(date +%H:%M)" || echo "    FAILED (see outputs/$$r.log)"; \
 	done
+
+SERVED_NAME ?= base
+ADAPTERS ?= m0_qlora lc_f0125 lc_f025 lc_f05 lc_f1 others ep3 lora16 seed2 seed3
+
+serve-multi:  ## base model + every adapter in ADAPTERS, each served under its own name
+	$(MAKE) --no-print-directory serve LORA= SERVED_NAME=$(SERVED_NAME) \
+	  EXTRA_LORA="--lora-modules $(foreach a,$(ADAPTERS),$(a)=/adapters/$(a)) --max-loras 4 --max-cpu-loras 16"
+
+GROUP ?= base3b
+
+m1-eval:  ## run every M1a eval config of GROUP against the running server; failures logged, not fatal
+	@mkdir -p outputs
+	@for f in experiments/configs/m1/eval/$(GROUP)--*.yaml; do \
+	  echo "=== $$f $$(date +%H:%M)"; \
+	  uv run sqltune eval --config $$f 2>&1 | grep -E "^results|WARNING|Error" || echo "    FAILED $$f"; \
+	done
+
+summarize:  ## one table over every results/m1_* run -> results/SUMMARY.md
+	uv run sqltune summarize --out results/SUMMARY.md
