@@ -17,7 +17,7 @@ from __future__ import annotations
 import re
 from collections import Counter
 from collections.abc import Iterator
-from typing import Any
+from typing import Any, Literal
 
 Rows = list[tuple[Any, ...]]
 
@@ -67,8 +67,15 @@ def _column_permutations(gold: Rows, pred: Rows, order_matters: bool) -> Iterato
 
 
 def results_match(
-    gold: Rows, pred: Rows, order_matters: bool, column_order_matters: bool = True
+    gold: Rows,
+    pred: Rows,
+    order_matters: bool,
+    column_order_matters: bool = True,
+    row_compare: Literal["multiset", "set"] = "multiset",
 ) -> bool:
+    if row_compare == "set":  # BIRD: set(gold) == set(pred), order and duplicates ignored
+        gold, pred = list(dict.fromkeys(gold)), list(dict.fromkeys(pred))
+        order_matters = False
     if _same(gold, pred, order_matters):
         return True
     if column_order_matters or not gold or not pred or len(gold) != len(pred):

@@ -118,3 +118,10 @@ def test_pred_exec_error(tiny_db: Path) -> None:
     outcome, _, res = score_example(_ex(tiny_db, "SELECT 1"), "SELECT nope FROM singer", CFG)
     assert outcome == "exec_error"
     assert res is not None and res.error
+
+
+def test_set_compare_ignores_duplicates_and_order() -> None:
+    gold = [(1,), (2,), (2,)]
+    pred = [(2,), (1,)]
+    assert results_match(gold, pred, order_matters=True, row_compare="set")
+    assert not results_match(gold, pred, order_matters=False, row_compare="multiset")

@@ -2,9 +2,9 @@
 
 Purpose: The single path every comparison row goes through (same questions, same prompt,
 same scorer), so differences between runs come only from what the config changes.
-Flow: load_spider -> select_subset -> build_messages -> backend.complete_many ->
-extract_sql -> score_example (process pool) -> results/<run_name>/
-{predictions.jsonl, metrics.json, config.yaml, report.md} -> MLflow.
+Flow: load_examples (Spider or BIRD) -> build_messages (+ few-shot) -> backend.complete_many
+-> extract_sql -> score_example (process pool) -> [retry failed queries once] ->
+results/<run_name>/{predictions.jsonl, metrics.json, config.yaml, report.md} -> MLflow.
 Params: the whole AppConfig; evaluation.exec_workers processes score SQL in parallel.
 Try: `make serve && make eval CONFIG=experiments/configs/m0/baseline.yaml`.
 """
@@ -22,6 +22,7 @@ import structlog
 import yaml
 
 from sqltune.config.models import AppConfig, EvalConfig
+from sqltune.data.bird import load_bird
 from sqltune.data.spider import load_spider
 from sqltune.data.subsets import select_subset
 from sqltune.domain import Example
@@ -31,7 +32,8 @@ from sqltune.evaluation.report import load_rows, render_report
 from sqltune.evaluation.tracking import log_to_mlflow
 from sqltune.inference.extract import extract_sql
 from sqltune.inference.openai_compat import Completion, OpenAICompatBackend
-from sqltune.prompting.builder import build_messages
+from sqltune.prompting.builder import build_messages, retry_messages
+from sqltune.prompting.fewshot import pick_shots
 
 log = structlog.get_logger()
 
@@ -50,28 +52,73 @@ def _score_all(
     examples: list[Example], preds: list[str | None], cfg: EvalConfig
 ) -> list[tuple[str, bool, str | None]]:
     jobs = [(ex, sql, cfg) for ex, sql in zip(examples, preds, strict=True)]
+    if not jobs:
+        return []
     # spawn: the parent holds asyncio/HTTP threads, which fork would copy in a broken state
     ctx = multiprocessing.get_context("spawn")
     with ProcessPoolExecutor(max_workers=min(cfg.exec_workers, len(jobs)), mp_context=ctx) as pool:
         return list(pool.map(_score, jobs, chunksize=16))
 
 
+def load_examples(cfg: AppConfig) -> list[Example]:
+    if cfg.data.dataset == "bird":
+        return load_bird(cfg.data)
+    return select_subset(load_spider(cfg.data, cfg.data.split), cfg.data)
+
+
+def build_requests(examples: list[Example], cfg: AppConfig) -> list[list[dict[str, str]]]:
+    if cfg.prompt.few_shot_k == 0:
+        return [build_messages(ex, cfg.prompt) for ex in examples]
+    pool = load_spider(cfg.data.model_copy(update={"include_train_others": False}), "train")
+    return [
+        build_messages(
+            ex, cfg.prompt, pick_shots(ex, pool, cfg.prompt.few_shot_k, cfg.prompt.few_shot_seed)
+        )
+        for ex in examples
+    ]
+
+
 def run_eval(cfg: AppConfig, backend: Backend | None = None) -> Path:
-    examples = select_subset(load_spider(cfg.data, cfg.data.split), cfg.data)
+    examples = load_examples(cfg)
     backend = backend or OpenAICompatBackend(cfg.inference)
     out = cfg.run.results_dir / cfg.run.run_name
     out.mkdir(parents=True, exist_ok=True)
 
+    requests = build_requests(examples, cfg)
     start = time.monotonic()
-    completions = backend.complete_many([build_messages(ex, cfg.prompt) for ex in examples])
-    gen_s = time.monotonic() - start
+    completions = backend.complete_many(requests)
     preds = [extract_sql(c.text) for c in completions]
     scores = _score_all(examples, preds, cfg.evaluation)
-    log.info("scored", n=len(examples), generation_s=round(gen_s, 1))
+    retried = [False] * len(examples)
+    first_sql: list[str | None] = [None] * len(examples)
+
+    failed = [i for i, (outcome, _, _) in enumerate(scores) if outcome == "exec_error"]
+    if cfg.inference.retry_on_error and failed:
+        second = backend.complete_many(
+            [
+                retry_messages(requests[i], completions[i].text, scores[i][2] or "", cfg.prompt)
+                for i in failed
+            ]
+        )
+        second_preds = [extract_sql(c.text) for c in second]
+        second_scores = _score_all([examples[i] for i in failed], second_preds, cfg.evaluation)
+        for j, i in enumerate(failed):
+            first, again = completions[i], second[j]
+            completions[i] = Completion(
+                text=again.text,
+                latency_ms=first.latency_ms + again.latency_ms,
+                prompt_tokens=(first.prompt_tokens or 0) + (again.prompt_tokens or 0),
+                completion_tokens=(first.completion_tokens or 0) + (again.completion_tokens or 0),
+                error=again.error,
+            )
+            first_sql[i], preds[i], scores[i] = preds[i], second_preds[j], second_scores[j]
+            retried[i] = True
+    gen_s = time.monotonic() - start
+    log.info("scored", n=len(examples), retried=sum(retried), generation_s=round(gen_s, 1))
 
     rows: list[dict[str, Any]] = []
-    for ex, comp, pred, (outcome, tolerant, pred_error) in zip(
-        examples, completions, preds, scores, strict=True
+    for ex, comp, pred, (outcome, tolerant, pred_error), was_retried, first in zip(
+        examples, completions, preds, scores, retried, first_sql, strict=True
     ):
         rows.append(
             {
@@ -84,6 +131,9 @@ def run_eval(cfg: AppConfig, backend: Backend | None = None) -> Path:
                 "outcome": outcome,
                 "col_tolerant_correct": tolerant,
                 "pred_error": pred_error,
+                "retried": was_retried,
+                "first_pred_sql": first,
+                "difficulty": ex.difficulty,
                 "latency_ms": comp.latency_ms,
                 "prompt_tokens": comp.prompt_tokens,
                 "completion_tokens": comp.completion_tokens,

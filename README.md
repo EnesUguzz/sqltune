@@ -46,3 +46,18 @@ and unpacks it into `data/spider/` (1.8 GB, git-ignored).
 166 SQLite databases under `database/` cover train and dev; dev databases do not appear in
 train. If gdown hits Drive's quota, download the zip in a browser, save it as
 `data/raw/spider.zip` and re-run `make download`.
+
+**BIRD Mini-Dev (SQLite).** `make download` also fetches it: the questions come from
+Hugging Face (`birdsql/bird_mini_dev`, the canonical copy) and the 11 SQLite databases from
+the official zip (1.4 GB in `data/bird/`). It has 500 questions: 148 simple, 250 moderate and
+102 challenging. Each question comes with an *evidence* hint, and that hint goes into the
+prompt (BIRD's standard setup). The set is split by database:
+
+| Half | Questions | Databases | Used for |
+|---|---|---|---|
+| `diag` | 250 | california_schools, card_games, formula_1, superhero, thrombosis_prediction | decisions, diagnostics |
+| `holdout` | 250 | codebase_community, debit_card_specializing, european_football_2, financial, student_club, toxicology | headline numbers, once per final model |
+
+Gold self-check: 499 of the 500 gold queries reproduce their own result. `bird-0340` does not
+finish in 30 s and counts as `gold_error`. BIRD runs use `row_compare: set` (like BIRD's
+official evaluator) and `exec_timeout_s: 30`.

@@ -51,6 +51,18 @@ def download(
         typer.echo(f"{split}: {len(load_spider(cfg.data, split))} questions")
     typer.echo(f"databases: {len(list((root / 'database').iterdir()))} in {root}")
 
+    from sqltune.data.bird import load_bird, split_bird
+    from sqltune.data.download import download_bird
+
+    bird_root = download_bird(cfg.data)
+    examples = load_bird(cfg.data.model_copy(update={"bird_split": "all"}))
+    diag, holdout = split_bird(examples, cfg.data.seed)
+    typer.echo(
+        f"BIRD Mini-Dev: {len(examples)} questions in {bird_root}; "
+        f"diag {len(diag)} ({len({e.db_id for e in diag})} DBs), "
+        f"holdout {len(holdout)} ({len({e.db_id for e in holdout})} DBs)"
+    )
+
 
 @app.command("eval")
 def eval_(

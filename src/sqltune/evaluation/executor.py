@@ -92,7 +92,10 @@ def score_example(
         assert pred.error_type is not None
         return pred.error_type, False, pred
     order = gold_has_order_by(ex.gold_sql)
-    if results_match(gold.rows, pred.rows, order):
+    mode = cfg.row_compare
+    if results_match(gold.rows, pred.rows, order, row_compare=mode):
         return "correct", True, pred
-    tolerant = results_match(gold.rows, pred.rows, order, column_order_matters=False)
+    tolerant = results_match(
+        gold.rows, pred.rows, order, column_order_matters=False, row_compare=mode
+    )
     return "wrong_result", tolerant, pred

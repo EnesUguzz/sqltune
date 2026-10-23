@@ -128,3 +128,34 @@ def test_cluster_ci_contains_point_estimate() -> None:
     lo, hi = db_cluster_bootstrap_ci(ref, new, n=500, seed=0)
     assert lo <= delta <= hi
     assert db_cluster_bootstrap_ci(ref, new, n=500, seed=0) == (lo, hi)
+
+
+class ScriptedBackend:
+    """Returns replies[i] for the i-th call of complete_many (one list per call)."""
+
+    def __init__(self, replies: list[list[str]]) -> None:
+        self.replies = replies
+        self.requests: list[list[list[dict[str, str]]]] = []
+
+    def complete_many(self, requests: list[list[dict[str, str]]]) -> list[Completion]:
+        texts = self.replies[len(self.requests)]
+        self.requests.append(requests)
+        return [
+            Completion(text=texts[i % len(texts)], latency_ms=1.0) for i in range(len(requests))
+        ]
+
+
+def test_retry_only_after_exec_error(tiny_spider: DataConfig, tmp_path: Path) -> None:
+    cfg = _cfg(tiny_spider, tmp_path, "retry")
+    cfg = cfg.model_copy(
+        update={"inference": cfg.inference.model_copy(update={"retry_on_error": True})}
+    )
+    broken = "```sql\nSELECT count(*) FROM singr\n```"
+    backend = ScriptedBackend([[GOOD, broken], [GOOD]])
+    out = run_eval(cfg, backend=backend)
+    rows = [json.loads(line) for line in (out / "predictions.jsonl").read_text().splitlines()]
+    assert len(backend.requests) == 2
+    assert len(backend.requests[1]) == 3  # only the 3 exec_error questions are retried
+    assert "no such table: singr" in backend.requests[1][0][-1]["content"]
+    assert [r["retried"] for r in rows] == [False, True] * 3
+    assert all(r["outcome"] == "correct" for r in rows)

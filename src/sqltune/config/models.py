@@ -60,6 +60,21 @@ class DataConfig(_Section):
             "Effect: a different seed draws a different subset; keep it fixed so runs compare."
         ),
     )
+    dataset: Literal["spider", "bird"] = Field(
+        "spider",
+        description=(
+            "What: benchmark to evaluate on. 'bird' = BIRD Mini-Dev (SQLite, 500 questions, "
+            "with evidence). Effect: picks loader and databases; training always uses Spider."
+        ),
+    )
+    bird_split: Literal["diag", "holdout", "all"] = Field(
+        "diag",
+        description=(
+            "What: half of BIRD Mini-Dev, split by database. 'diag' is used for decisions and "
+            "diagnostics; 'holdout' is the headline set, run once per final model. "
+            "Effect: keeps the headline number free of tuning."
+        ),
+    )
     spider_drive_id: str = Field(
         "1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J",
         description=(
@@ -92,6 +107,49 @@ class PromptConfig(_Section):
         description=(
             "What: user message template with {schema} and {question} placeholders. "
             "Effect: same as system_template; SFT trains on exactly this text."
+        ),
+    )
+
+    evidence_template: Path = Field(
+        Path("prompts/sql_single_evidence.md"),
+        description=(
+            "What: user template used when the example has evidence (BIRD's hint field), with "
+            "{schema}, {evidence} and {question}. Effect: BIRD's standard setup; Spider never "
+            "uses it, so Spider prompts are unchanged."
+        ),
+    )
+    retry_template: Path = Field(
+        Path("prompts/sql_retry.md"),
+        description=(
+            "What: follow-up message after a query fails, with {error} (the SQLite error text "
+            "only). Effect: used only when inference.retry_on_error is true."
+        ),
+    )
+    sample_rows: int = Field(
+        0,
+        ge=0,
+        le=10,
+        description=(
+            "What: example rows shown under each CREATE TABLE. Typical: 0 or 3. Effect: the "
+            "model sees real values and spellings (helps with invented columns / values); "
+            "longer prompts, slower; a fine-tune trained without rows sees a new prompt."
+        ),
+    )
+    few_shot_k: int = Field(
+        0,
+        ge=0,
+        le=8,
+        description=(
+            "What: solved Spider-train examples (from other databases) shown before the "
+            "question. Typical: 0 or 3. Effect: teaches format and conventions without "
+            "training; the fair baseline for a fine-tune; prompt grows with each shot's schema."
+        ),
+    )
+    few_shot_seed: int = Field(
+        13,
+        description=(
+            "What: seed for picking few-shot examples (combined with the question id). "
+            "Effect: a different seed shows different examples."
         ),
     )
 
@@ -161,6 +219,16 @@ class InferenceConfig(_Section):
         ),
     )
 
+    retry_on_error: bool = Field(
+        False,
+        description=(
+            "What: when the first query fails to execute, send the SQLite error back once and "
+            "score the second answer. Typical: false (plain) / true (retry row). Effect: fixes "
+            "invented columns and syntax slips; one extra model call for failed questions only; "
+            "the model never sees whether a query that ran was right."
+        ),
+    )
+
 
 class EvalConfig(_Section):
     exec_timeout_s: float = Field(
@@ -194,6 +262,16 @@ class EvalConfig(_Section):
         description=(
             "What: MLflow tracking store. Typical: sqlite:///mlflow.db (local). "
             "Effect: none on metrics; `mlflow ui --backend-store-uri sqlite:///mlflow.db`."
+        ),
+    )
+
+    row_compare: Literal["multiset", "set"] = Field(
+        "multiset",
+        description=(
+            "What: how result rows are compared. 'multiset' = duplicates count and ORDER BY in "
+            "the gold query makes order matter (Spider convention); 'set' = set(gold) == "
+            "set(pred), order and duplicates ignored (BIRD's official evaluator). Typical: "
+            "multiset for Spider, set for BIRD."
         ),
     )
 

@@ -35,3 +35,5 @@ class Example(BaseModel):
     db_path: Path
     question: str
     gold_sql: str
+    evidence: str | None = None  # BIRD hint text; None for Spider
+    difficulty: str | None = None  # BIRD: simple / moderate / challenging
