@@ -34,6 +34,24 @@ def check_env(
         typer.echo(f"{key:<{width}}  {value}")
 
 
+@app.command("download")
+def download(
+    config: Annotated[Path, typer.Option(help="Experiment YAML.")] = Path(
+        "experiments/configs/base.yaml"
+    ),
+) -> None:
+    """Download and unpack Spider (questions + SQLite databases) into <data_dir>/spider/."""
+    from sqltune.config.loader import load_config
+    from sqltune.data.download import download_spider
+    from sqltune.data.spider import load_spider
+
+    cfg = load_config(config)
+    root = download_spider(cfg.data)
+    for split in ("train", "dev"):
+        typer.echo(f"{split}: {len(load_spider(cfg.data, split))} questions")
+    typer.echo(f"databases: {len(list((root / 'database').iterdir()))} in {root}")
+
+
 @app.command("dummy-adapter")
 def dummy_adapter(
     out: Annotated[Path, typer.Option(help="Output folder.")] = Path("adapters/dummy"),

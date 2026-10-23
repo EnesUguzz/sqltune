@@ -4,7 +4,7 @@ LORA ?=
 # Seconds to wait for vLLM to report healthy (first start downloads the model).
 SERVE_WAIT ?= 900
 
-.PHONY: setup test lint format check-env serve serve-down
+.PHONY: setup test lint format check-env serve serve-down download
 
 setup:
 	uv sync --extra train
@@ -33,3 +33,6 @@ serve:  ## vLLM on :8000; `make serve LORA=m0_qlora` also serves adapters/m0_qlo
 
 serve-down:
 	docker compose down
+
+download:  ## Spider questions + SQLite DBs -> data/spider/
+	uv run sqltune download

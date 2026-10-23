@@ -26,4 +26,16 @@ Docker needs the NVIDIA Container Toolkit for GPU access (`docker_gpu` in `make 
 
 ## Data
 
-_Filled in during M0 Task 2._
+`make download` fetches the official Spider zip (2024 release, CC BY-SA 4.0) from Google Drive
+and unpacks it into `data/spider/` (1.8 GB, git-ignored).
+
+| Split | Questions | Used for |
+|---|---|---|
+| train (`train_spider.json`) | 7000 | SFT |
+| train_others | 1659 | not used in M0 |
+| dev | 1034 | baseline vs fine-tune comparison |
+| test | 2147 | final numbers only (run once) |
+
+166 SQLite databases under `database/` cover train and dev; dev databases do not appear in
+train. If gdown hits Drive's quota, download the zip in a browser, save it as
+`data/raw/spider.zip` and re-run `make download`.
