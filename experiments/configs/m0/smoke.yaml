@@ -1,0 +1,10 @@
+# 50-step pipeline check before the full run: loss should fall, no OOM, the loss-mask check
+# passes, and the measured steps/s gives the full run's duration.
+extends: qlora.yaml
+
+run:
+  run_name: m0_smoke
+
+training:
+  max_steps: 50
+  save_steps: 1000         # no intermediate checkpoint for a 50-step run

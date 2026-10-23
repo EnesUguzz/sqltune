@@ -1,0 +1,16 @@
+# M0 fine-tune: QLoRA (4-bit frozen base + 16-bit LoRA adapter) on all of Spider train.
+# Stop vLLM first (`make serve-down`), then `make train CONFIG=experiments/configs/m0/qlora.yaml`.
+extends: ../base.yaml
+
+run:
+  run_name: m0_qlora       # adapter -> adapters/m0_qlora/, summary -> results/m0_qlora/
+
+training:
+  load_in_4bit: true       # QLoRA; false = LoRA on a bf16 base (M1 comparison)
+  max_seq_length: 2048     # drops 82 baseball_1 records (max 2336 tokens); dev max is 1016
+  r: 16                    # adapter rank
+  lora_alpha: 16           # scale = alpha / r = 1
+  learning_rate: 2.0e-4
+  num_train_epochs: 2      # ~860 optimizer steps at effective batch 16
+  per_device_train_batch_size: 8
+  gradient_accumulation_steps: 2   # effective batch = 8 x 2 = 16

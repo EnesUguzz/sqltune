@@ -69,6 +69,17 @@ def eval_(
     )
 
 
+@app.command("train")
+def train_(
+    config: Annotated[Path, typer.Option(help="Experiment YAML.")],
+) -> None:
+    """Fine-tune the base model on Spider train with LoRA/QLoRA; saves adapters/<run_name>/."""
+    from sqltune.config.loader import load_config
+    from sqltune.training.train import train
+
+    typer.echo(f"wrote {train(load_config(config))}")
+
+
 @app.command("dummy-adapter")
 def dummy_adapter(
     out: Annotated[Path, typer.Option(help="Output folder.")] = Path("adapters/dummy"),

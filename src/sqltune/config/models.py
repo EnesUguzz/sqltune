@@ -310,6 +310,14 @@ class TrainConfig(_Section):
             "Effect: small; cosine ends with a gentler lr."
         ),
     )
+    optim: str = Field(
+        "adamw_8bit",
+        description=(
+            "What: optimizer (transformers name). Typical: adamw_8bit (Unsloth default) or "
+            "adamw_torch_fused. Effect: 8-bit optimizer states save ~0.5 GB VRAM on a 3B LoRA; "
+            "quality is the same in practice."
+        ),
+    )
     weight_decay: float = Field(
         0.0,
         ge=0.0,
