@@ -77,6 +77,13 @@ def test_ex_excludes_gold_errors() -> None:
     assert m["rate_exec_error"] == pytest.approx(0.5)
 
 
+def test_transport_errors_counted() -> None:
+    """A request that failed after retries is a server problem, not the model's no_sql."""
+    failed = {**_row("b", "no_sql"), "error": "APIConnectionError()"}
+    m = compute_metrics([_row("a", "correct"), failed])
+    assert m["n_transport_error"] == 1
+
+
 def test_mcnemar_exact_p() -> None:
     assert mcnemar_exact_p(0, 0) == 1.0
     assert mcnemar_exact_p(10, 0) == pytest.approx(0.001953125)

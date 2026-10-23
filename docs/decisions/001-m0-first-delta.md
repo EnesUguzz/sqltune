@@ -18,8 +18,8 @@ Date: 2026-10-24. Runs: `results/m0_baseline/`, `results/m0_qlora/`, `results/m0
 
 | | Baseline (prompt) | QLoRA SFT | Δ |
 |---|---|---|---|
-| EX (strict column order) | 64.2 | **73.6** | **+9.4** |
-| EX (column order tolerant) | 67.9 | 76.8 | +8.9 |
+| EX, column order tolerant (official-evaluator style) | 67.9 | **76.8** | **+8.9** |
+| EX, strict column order | 64.2 | 73.6 | +9.4 |
 | wrong_result | 25.1 | 21.5 | −3.7 |
 | exec_error | 10.6 | 4.9 | −5.7 |
 | latency p50 / p95 (ms, 16 concurrent) | 373 / 833 | 423 / 1029 | LoRA overhead |
@@ -57,4 +57,8 @@ Latency is indicative only: it comes from the eval run, not from a controlled be
 - The plan's smoke evaluation on the 50-step adapter was skipped: vLLM was blocked by the
   missing NVIDIA Container Toolkit, and the full run was trained meanwhile. What it would
   have checked is covered: vLLM `/tokenize` gives prompt tokens identical to training on
-  22 of 22 checks, and the full eval ran with 0 transport errors.
+  22 of 22 checks (`scripts/check_tokenize.py`), and the full eval ran with 0 transport
+  errors (`n_transport_error` is now a metric).
+- The tolerant EX column is the one comparable to published Spider numbers: the official
+  test-suite evaluator also accepts permuted columns. The strict variant is kept because the
+  gap between the two shows how much of the score is column-order convention.

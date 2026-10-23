@@ -29,6 +29,9 @@ def compute_metrics(rows: list[dict[str, Any]]) -> dict[str, float]:
     metrics: dict[str, float] = {
         "n": n,
         "n_gold_error": counts["gold_error"],
+        # requests that failed after retries (server down, timeouts); scored as no_sql, so a
+        # non-zero value means the EX of this run understates the model
+        "n_transport_error": sum(1 for r in rows if r.get("error")),
         "ex": counts["correct"] / denom,
         "ex_col_tolerant": sum(
             1 for r in rows if r["outcome"] != "gold_error" and r["col_tolerant_correct"]

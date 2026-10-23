@@ -38,8 +38,9 @@ def _sequences(batch: dict[str, Any]) -> list[tuple[list[int], list[int]]]:
     return out
 
 
-def check_loss_mask(batch: dict[str, Any], tokenizer: Any) -> None:
-    """Fail fast if prompt tokens are not masked (-100) or the completion is masked."""
+def check_loss_mask(batch: dict[str, Any], tokenizer: Any, eos_id: int | None = None) -> None:
+    """Fail fast if prompt tokens are not masked (-100), the completion is masked, or (with
+    eos_id) the trained part lacks the end-of-turn token, so the model would never stop."""
     header = tokenizer.encode(ASSISTANT_HEADER, add_special_tokens=False)
     for ids, labels in _sequences(batch):
         starts = [
@@ -52,6 +53,8 @@ def check_loss_mask(batch: dict[str, Any], tokenizer: Any) -> None:
             raise AssertionError("prompt tokens contribute to the loss (completion_only_loss off?)")
         if labels[prompt_end] == -100:
             raise AssertionError("first completion token is masked; nothing would be learned")
+        if eos_id is not None and eos_id not in labels[prompt_end:]:
+            raise AssertionError("trained completion does not end with the end-of-turn token")
 
 
 def _fix_adapter_base(adapter_dir: Path, base_model: str) -> None:
@@ -118,7 +121,11 @@ def train(cfg: AppConfig) -> Path:
         report_to="mlflow",
     )
     trainer = SFTTrainer(model=model, processing_class=tokenizer, train_dataset=dataset, args=args)
-    check_loss_mask(next(iter(trainer.get_train_dataloader())), tokenizer)
+    check_loss_mask(
+        next(iter(trainer.get_train_dataloader())),
+        tokenizer,
+        eos_id=tokenizer.convert_tokens_to_ids("<|im_end|>"),
+    )
 
     mlflow.set_tracking_uri(cfg.evaluation.mlflow_tracking_uri)
     mlflow.set_experiment(cfg.run.experiment_name)

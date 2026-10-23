@@ -55,6 +55,16 @@ def test_packed_row_checked_per_sequence() -> None:
         check_loss_mask(batch, FakeTokenizer())
 
 
+def test_completion_must_end_with_eos() -> None:
+    """The last trained token must be <|im_end|>, or the model never learns to stop."""
+    labels = [-100] * 6 + [40, 41, 42]
+    with pytest.raises(AssertionError, match="end"):
+        check_loss_mask(_batch(labels), FakeTokenizer(), eos_id=99)
+    ids_eos = [1, 2, 3, *HEADER, 40, 41, 99]
+    batch = {"input_ids": Rows([ids_eos]), "labels": Rows([[-100] * 6 + [40, 41, 99]])}
+    check_loss_mask(batch, FakeTokenizer(), eos_id=99)
+
+
 def test_missing_header_fails() -> None:
     batch = {"input_ids": Rows([[1, 2, 3]]), "labels": Rows([[-100, -100, 3]])}
     with pytest.raises(AssertionError, match="header"):

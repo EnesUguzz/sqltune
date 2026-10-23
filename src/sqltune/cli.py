@@ -64,6 +64,12 @@ def eval_(
 
     out = run_eval(load_config(config))
     metrics = json.loads((out / "metrics.json").read_text(encoding="utf-8"))
+    if metrics["n_transport_error"]:
+        typer.secho(
+            f"WARNING: {metrics['n_transport_error']:.0f} requests failed after retries and "
+            "were scored as no_sql; check the server and re-run before using this EX.",
+            fg=typer.colors.RED,
+        )
     typer.echo(
         f"{out}: EX {100 * metrics['ex']:.1f} (col-tolerant {100 * metrics['ex_col_tolerant']:.1f}), n={metrics['n']:.0f}"
     )

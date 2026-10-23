@@ -5,19 +5,24 @@ comparing results instead of SQL text gives credit for any valid formulation.
 Flow: executor.py (gold rows, predicted rows) -> results_match() -> Outcome.
 Params: order_matters (from gold_has_order_by), column_order_matters.
 Rules: rows compared as a multiset (duplicates count) unless the gold query sorts at its
-outermost level; columns compared in order (strict EX, Spider's convention) or, for the
-tolerant EX, under any column permutation that makes the results match.
+outermost level; columns compared in order (strict EX, stricter than the official Spider
+evaluator) or, for the tolerant EX, under any column permutation that makes the results match
+(what the official test-suite evaluator accepts, so ex_col_tolerant is the number comparable
+to published Spider EX).
 Try: `results_match([(1, "a")], [("a", 1)], False, column_order_matters=False)` -> True.
 """
 
 from __future__ import annotations
 
-import itertools
 import re
 from collections import Counter
+from collections.abc import Iterator
 from typing import Any
 
 Rows = list[tuple[Any, ...]]
+
+# Column assignments tried before giving up on the tolerant match (reported as not equal).
+MAX_PERMUTATIONS = 10_000
 
 _ORDER_BY = re.compile(r"\bORDER\s+BY\b", re.IGNORECASE)
 
@@ -28,22 +33,37 @@ def _same(gold: Rows, pred: Rows, order_matters: bool) -> bool:
     return Counter(gold) == Counter(pred)
 
 
-def _column_permutations(gold: Rows, pred: Rows, order_matters: bool) -> list[tuple[int, ...]]:
-    """Permutations p with pred column p[j] holding the same values as gold column j."""
+def _column_permutations(gold: Rows, pred: Rows, order_matters: bool) -> Iterator[tuple[int, ...]]:
+    """Yield permutations p with pred column p[j] holding the same values as gold column j.
+
+    Backtracking with symmetry breaking: pred columns whose values are identical are
+    interchangeable, so only the first unused one of each identical group is tried. This
+    keeps wide results with many equal columns (all-NULL, all-0) from exploding."""
     ncols = len(gold[0])
 
-    def col(rows: Rows, i: int) -> list[Any]:
-        return [r[i] for r in rows]
+    def key(rows: Rows, i: int) -> Any:
+        values = [r[i] for r in rows]
+        return tuple(values) if order_matters else frozenset(Counter(values).items())
 
-    candidates = []
-    for j in range(ncols):
-        g = col(gold, j)
-        if order_matters:
-            options = [i for i in range(ncols) if col(pred, i) == g]
-        else:
-            options = [i for i in range(ncols) if Counter(col(pred, i)) == Counter(g)]
-        candidates.append(options)
-    return [p for p in itertools.product(*candidates) if len(set(p)) == ncols]
+    gold_keys = [key(gold, j) for j in range(ncols)]
+    pred_cols = [tuple(r[i] for r in pred) for i in range(ncols)]
+    candidates = [[i for i in range(ncols) if key(pred, i) == gold_keys[j]] for j in range(ncols)]
+    tried = 0
+
+    def extend(prefix: list[int], used: set[int]) -> Iterator[tuple[int, ...]]:
+        nonlocal tried
+        if len(prefix) == ncols:
+            tried += 1
+            yield tuple(prefix)
+            return
+        seen: set[tuple[Any, ...]] = set()
+        for i in candidates[len(prefix)]:
+            if i in used or pred_cols[i] in seen or tried >= MAX_PERMUTATIONS:
+                continue
+            seen.add(pred_cols[i])
+            yield from extend([*prefix, i], used | {i})
+
+    yield from extend([], set())
 
 
 def results_match(

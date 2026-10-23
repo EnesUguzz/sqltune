@@ -56,6 +56,25 @@ def test_correct_is_also_tolerant_correct(tiny_db: Path) -> None:
     assert (outcome, tolerant) == ("correct", True)
 
 
+def test_tolerant_match_wide_identical_columns_is_fast() -> None:
+    """Many columns with equal values must not explode into ncols^ncols candidates."""
+    gold = [tuple([0] * 12)]
+    pred = [tuple([0] * 11 + [1])]
+    start = time.monotonic()
+    assert not results_match(gold, pred, order_matters=False, column_order_matters=False)
+    assert time.monotonic() - start < 1.0
+
+
+def test_tolerant_match_finds_permutation_among_equal_columns() -> None:
+    gold = [(1, 0, 0, 2), (3, 0, 0, 4)]
+    pred = [(0, 2, 1, 0), (0, 4, 3, 0)]
+    assert results_match(gold, pred, order_matters=True, column_order_matters=False)
+
+
+def test_tolerant_match_int_equals_float() -> None:
+    assert results_match([(1, "a")], [("a", 1.0)], order_matters=False, column_order_matters=False)
+
+
 def test_gold_has_order_by() -> None:
     assert gold_has_order_by("SELECT a FROM t ORDER BY a")
     assert not gold_has_order_by("SELECT a FROM (SELECT a FROM t ORDER BY a LIMIT 3)")
