@@ -17,12 +17,12 @@ from sqltune.domain import Example
 SPLIT_FILES = {"train": "train_spider.json", "dev": "dev.json"}
 
 
-def load_spider(cfg: DataConfig, split: Literal["train", "dev"]) -> list[Example]:
+def _read(cfg: DataConfig, filename: str, split: str, prefix: str) -> list[Example]:
     root = cfg.data_dir / "spider"
-    records = json.loads((root / SPLIT_FILES[split]).read_text(encoding="utf-8"))
+    records = json.loads((root / filename).read_text(encoding="utf-8"))
     return [
         Example(
-            id=f"spider-{split}-{i:04d}",
+            id=f"{prefix}-{i:04d}",
             split=split,
             db_id=r["db_id"],
             db_path=root / "database" / r["db_id"] / f"{r['db_id']}.sqlite",
@@ -31,3 +31,10 @@ def load_spider(cfg: DataConfig, split: Literal["train", "dev"]) -> list[Example
         )
         for i, r in enumerate(records)
     ]
+
+
+def load_spider(cfg: DataConfig, split: Literal["train", "dev"]) -> list[Example]:
+    examples = _read(cfg, SPLIT_FILES[split], split, f"spider-{split}")
+    if split == "train" and cfg.include_train_others:
+        examples += _read(cfg, "train_others.json", "train", "spider-trainothers")
+    return examples

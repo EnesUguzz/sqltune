@@ -72,3 +72,29 @@ def test_real_spider_counts() -> None:
     cfg = DataConfig()
     assert len(load_spider(cfg, "dev")) == 1034
     assert len(load_spider(cfg, "train")) == 7000
+
+
+def test_include_train_others(tiny_spider: DataConfig) -> None:
+    import json as _json
+
+    root = tiny_spider.data_dir / "spider"
+    rec = [{"db_id": "tiny", "question": "Other?", "query": "SELECT 1"}]
+    (root / "train_others.json").write_text(_json.dumps(rec), encoding="utf-8")
+    cfg = tiny_spider.model_copy(update={"include_train_others": True})
+    ids = [e.id for e in load_spider(cfg, "train")]
+    assert len(ids) == 5
+    assert ids[-1] == "spider-trainothers-0000"
+    assert len(load_spider(tiny_spider, "train")) == 4  # off by default
+
+
+def test_train_fraction_deterministic() -> None:
+    from sqltune.data.subsets import select_fraction
+
+    exs = _examples(100)
+    a = select_fraction(exs, 0.25, seed=13)
+    assert len(a) == 25
+    assert a == select_fraction(exs, 0.25, seed=13)
+    assert select_fraction(exs, 1.0, seed=13) == exs
+    assert set(e.id for e in select_fraction(exs, 0.125, seed=13)) <= set(
+        e.id for e in select_fraction(exs, 0.25, seed=13)
+    )  # nested: a smaller fraction is a subset of a larger one

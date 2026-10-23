@@ -52,6 +52,36 @@ def compute_metrics(rows: list[dict[str, Any]]) -> dict[str, float]:
     return metrics
 
 
+def db_cluster_bootstrap_ci(
+    ref_rows: list[dict[str, Any]],
+    rows: list[dict[str, Any]],
+    n: int = 2000,
+    seed: int = 13,
+    key: str = "col_tolerant_correct",
+) -> tuple[float, float]:
+    """95% CI of the paired EX delta, resampling whole databases with replacement.
+
+    Questions on one database (and Spider's paraphrase pairs) are not independent, so
+    resampling databases gives an honest interval where McNemar's p is overconfident."""
+    ref = {r["id"]: r for r in ref_rows}
+    by_db: dict[str, list[int]] = {}
+    for r in rows:
+        old = ref.get(r["id"])
+        if old is None or "gold_error" in (r.get("outcome"), old.get("outcome")):
+            continue
+        by_db.setdefault(r["db_id"], []).append(int(bool(r[key])) - int(bool(old[key])))
+    dbs = sorted(by_db)
+    if not dbs:
+        return 0.0, 0.0
+    rng = np.random.default_rng(seed)
+    deltas = []
+    for _ in range(n):
+        picked = [x for i in rng.integers(0, len(dbs), len(dbs)) for x in by_db[dbs[i]]]
+        deltas.append(sum(picked) / len(picked))
+    lo, hi = np.percentile(deltas, [2.5, 97.5])
+    return float(lo), float(hi)
+
+
 def mcnemar_exact_p(fixed: int, broken: int) -> float:
     """Two-sided exact McNemar test on the discordant pairs (binomial, p = 0.5)."""
     n = fixed + broken

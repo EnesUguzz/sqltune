@@ -18,16 +18,20 @@ Date: 2026-10-24. Runs: `results/m0_baseline/`, `results/m0_qlora/`, `results/m0
 
 | | Baseline (prompt) | QLoRA SFT | Δ |
 |---|---|---|---|
-| EX, column order tolerant (official-evaluator style) | 67.9 | **76.8** | **+8.9** |
+| EX, column order tolerant | 67.9 | **76.8** | **+8.9** |
 | EX, strict column order | 64.2 | 73.6 | +9.4 |
 | wrong_result | 25.1 | 21.5 | −3.7 |
 | exec_error | 10.6 | 4.9 | −5.7 |
 | latency p50 / p95 (ms, 16 concurrent) | 373 / 833 | 423 / 1029 | LoRA overhead |
 
-Paired: 151 fixed, 54 broken; exact McNemar p = 8.2e-12. The gain is not noise.
+Paired, strict EX: 151 fixed, 54 broken (column-tolerant EX: 144 fixed, 52 broken).
+Exact McNemar gives p = 8.2e-12, but it assumes independent questions. Spider dev clusters
+on 20 databases and contains paraphrase pairs, so the honest interval resamples databases:
+**95% CI of the tolerant Δ = [+5.7, +11.7]** (DB-cluster bootstrap). The gain is not noise.
 
 Training: 866 steps in 26.4 min (0.55 steps/s) on an RTX 5080. Peak VRAM was 3.5 GiB and
-loss went from 0.36 to 0.03. 1.7 % of the parameters are trainable.
+logged loss went from 0.36 to ~0.03; `final_train_loss` in `train_summary.json` (0.08) is the
+average over the whole run. 1.7 % of the parameters are trainable.
 Latency is indicative only: it comes from the eval run, not from a controlled benchmark
 (the M1 bench will measure it properly).
 
@@ -59,6 +63,7 @@ Latency is indicative only: it comes from the eval run, not from a controlled be
   have checked is covered: vLLM `/tokenize` gives prompt tokens identical to training on
   22 of 22 checks (`scripts/check_tokenize.py`), and the full eval ran with 0 transport
   errors (`n_transport_error` is now a metric).
-- The tolerant EX column is the one comparable to published Spider numbers: the official
-  test-suite evaluator also accepts permuted columns. The strict variant is kept because the
+- The tolerant EX column is the closer match to published Spider numbers: the official
+  test-suite evaluator also accepts permuted columns. It is not that evaluator, though (no
+  test-suite database variants), so "lucky" matches are not filtered out. The strict variant is kept because the
   gap between the two shows how much of the score is column-order convention.

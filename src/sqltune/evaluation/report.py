@@ -10,10 +10,11 @@ Try: `make eval CONFIG=experiments/configs/m0/qlora_eval.yaml`, open results/<ru
 from __future__ import annotations
 
 import json
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
-from sqltune.evaluation.metrics import mcnemar_exact_p
+from sqltune.evaluation.metrics import db_cluster_bootstrap_ci, mcnemar_exact_p
 
 EXAMPLES_PER_SIDE = 5
 PERCENT_METRICS = ("ex", "ex_col_tolerant")
@@ -28,6 +29,34 @@ def _fmt(key: str, value: float) -> str:
     if key in PERCENT_METRICS or key.startswith("rate_"):
         return f"{100 * value:.1f}"
     return f"{value:.1f}" if isinstance(value, float) else str(value)
+
+
+ERROR_KINDS = (
+    "no such column",
+    "no such table",
+    "ambiguous column",
+    "syntax error",
+    "misuse of aggregate",
+)
+
+
+def error_kind(message: str | None) -> str:
+    text = (message or "").lower()
+    return next((kind for kind in ERROR_KINDS if kind in text), "other")
+
+
+def _diagnostics(rows: list[dict[str, Any]]) -> list[str]:
+    errors = Counter(error_kind(r.get("pred_error")) for r in rows if r["outcome"] == "exec_error")
+    lines = ["## Execution errors", "", "| kind | count |", "|---|---|"]
+    lines += [f"| {kind} | {count} |" for kind, count in errors.most_common()] or ["| none | 0 |"]
+    per_db: dict[str, list[bool]] = defaultdict(list)
+    for r in rows:
+        if r["outcome"] != "gold_error":
+            per_db[r["db_id"]].append(bool(r["col_tolerant_correct"]))
+    lines += ["", "## Per database", "", "| db | n | EX (col-tolerant) |", "|---|---|---|"]
+    for db, hits in sorted(per_db.items(), key=lambda kv: sum(kv[1]) / len(kv[1])):
+        lines.append(f"| {db} | {len(hits)} | {100 * sum(hits) / len(hits):.1f} |")
+    return [*lines, ""]
 
 
 def _example_block(title: str, rows: list[dict[str, Any]]) -> list[str]:
@@ -51,6 +80,7 @@ def render_report(
     if reference is None:
         lines += ["| metric | value |", "|---|---|"]
         lines += [f"| {k} | {_fmt(k, v)} |" for k, v in metrics.items()]
+        lines += ["", *_diagnostics(rows)]
         return "\n".join(lines) + "\n"
 
     ref_name, ref_rows, ref_metrics = reference
@@ -77,12 +107,17 @@ def render_report(
         new for old, new in paired if old["outcome"] == "correct" and new["outcome"] != "correct"
     ]
     p = mcnemar_exact_p(len(fixed), len(broken))
+    lo, hi = db_cluster_bootstrap_ci(ref_rows, rows)
     lines += [
         "",
         f"Paired questions: {len(paired)}; fixed: {len(fixed)}; broken: {len(broken)}; "
         f"exact McNemar p = {p:.4g}",
         "",
+        f"Δ EX (col-tolerant), 95% CI resampling databases: [{100 * lo:+.1f}, {100 * hi:+.1f}] "
+        "(fixed/broken above use strict EX)",
+        "",
     ]
     lines += _example_block("Fixed (wrong before, correct now)", fixed)
     lines += _example_block("Broken (correct before, wrong now)", broken)
+    lines += _diagnostics(rows)
     return "\n".join(lines) + "\n"

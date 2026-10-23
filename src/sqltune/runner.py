@@ -40,15 +40,15 @@ class Backend(Protocol):
     def complete_many(self, requests: list[list[dict[str, str]]]) -> list[Completion]: ...
 
 
-def _score(args: tuple[Example, str | None, EvalConfig]) -> tuple[str, bool]:
+def _score(args: tuple[Example, str | None, EvalConfig]) -> tuple[str, bool, str | None]:
     ex, pred_sql, cfg = args
-    outcome, tolerant, _ = score_example(ex, pred_sql, cfg)
-    return outcome, tolerant
+    outcome, tolerant, result = score_example(ex, pred_sql, cfg)
+    return outcome, tolerant, result.error if result is not None else None
 
 
 def _score_all(
     examples: list[Example], preds: list[str | None], cfg: EvalConfig
-) -> list[tuple[str, bool]]:
+) -> list[tuple[str, bool, str | None]]:
     jobs = [(ex, sql, cfg) for ex, sql in zip(examples, preds, strict=True)]
     # spawn: the parent holds asyncio/HTTP threads, which fork would copy in a broken state
     ctx = multiprocessing.get_context("spawn")
@@ -70,7 +70,7 @@ def run_eval(cfg: AppConfig, backend: Backend | None = None) -> Path:
     log.info("scored", n=len(examples), generation_s=round(gen_s, 1))
 
     rows: list[dict[str, Any]] = []
-    for ex, comp, pred, (outcome, tolerant) in zip(
+    for ex, comp, pred, (outcome, tolerant, pred_error) in zip(
         examples, completions, preds, scores, strict=True
     ):
         rows.append(
@@ -83,6 +83,7 @@ def run_eval(cfg: AppConfig, backend: Backend | None = None) -> Path:
                 "pred_sql": pred,
                 "outcome": outcome,
                 "col_tolerant_correct": tolerant,
+                "pred_error": pred_error,
                 "latency_ms": comp.latency_ms,
                 "prompt_tokens": comp.prompt_tokens,
                 "completion_tokens": comp.completion_tokens,

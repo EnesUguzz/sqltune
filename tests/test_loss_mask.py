@@ -69,3 +69,17 @@ def test_missing_header_fails() -> None:
     batch = {"input_ids": Rows([[1, 2, 3]]), "labels": Rows([[-100, -100, 3]])}
     with pytest.raises(AssertionError, match="header"):
         check_loss_mask(batch, FakeTokenizer())
+
+
+def test_warmup_steps_from_ratio() -> None:
+    from sqltune.config.models import TrainConfig
+    from sqltune.training.train import warmup_steps
+
+    cfg = TrainConfig(
+        warmup_ratio=0.03,
+        num_train_epochs=2,
+        per_device_train_batch_size=8,
+        gradient_accumulation_steps=2,
+    )
+    assert warmup_steps(6918, cfg) == 26  # ceil(0.03 * ceil(6918 / 16) * 2) = ceil(25.95)
+    assert warmup_steps(6918, cfg.model_copy(update={"max_steps": 50})) == 2

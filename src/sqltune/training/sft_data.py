@@ -14,6 +14,7 @@ from typing import TYPE_CHECKING, Any, Protocol
 
 from sqltune.config.models import AppConfig, PromptConfig
 from sqltune.data.spider import load_spider
+from sqltune.data.subsets import select_fraction
 from sqltune.domain import Example
 from sqltune.prompting.builder import build_messages
 
@@ -45,7 +46,10 @@ def build_sft_dataset(cfg: AppConfig, tokenizer: ChatTokenizer) -> tuple[Dataset
 
     records = []
     dropped = 0
-    for ex in load_spider(cfg.data, "train"):
+    examples = select_fraction(
+        load_spider(cfg.data, "train"), cfg.training.train_fraction, cfg.training.seed
+    )
+    for ex in examples:
         record = to_sft_record(ex, cfg.prompt)
         if (
             _n_tokens(tokenizer, record["prompt"] + record["completion"])

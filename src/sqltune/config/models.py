@@ -68,6 +68,14 @@ class DataConfig(_Section):
             "the official link moves."
         ),
     )
+    include_train_others: bool = Field(
+        False,
+        description=(
+            "What: also train on Spider's train_others.json (1659 questions on 6 more "
+            "databases). Typical: false; true for the data-diversity experiment. "
+            "Effect: more schemas seen in training; ~24% more training time."
+        ),
+    )
 
 
 class PromptConfig(_Section):
@@ -278,6 +286,16 @@ class TrainConfig(_Section):
             "Typical: null; 50 for smoke tests. Effect: short runs only check the pipeline."
         ),
     )
+    train_fraction: float = Field(
+        1.0,
+        gt=0.0,
+        le=1.0,
+        description=(
+            "What: share of the training questions used (fixed shuffle with `seed`; smaller "
+            "fractions are subsets of larger ones). Typical: 1.0; 0.125-0.5 for a learning "
+            "curve. Effect: shows whether more data of the same kind would still help."
+        ),
+    )
     per_device_train_batch_size: int = Field(
         8,
         ge=1,
@@ -343,7 +361,7 @@ class TrainConfig(_Section):
         13,
         description=(
             "What: training seed (adapter init, data order). Typical: fixed integer. "
-            "Effect: different seeds give ~+/-1 point EX variation."
+            "Effect: seed-to-seed EX variation is measured in M1 (seed2/seed3 runs)."
         ),
     )
     output_dir: Path = Field(

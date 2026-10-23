@@ -99,3 +99,32 @@ def test_report_shows_delta_vs_reference(tiny_spider: DataConfig, tmp_path: Path
     assert "fixed: 6" in report
     assert "broken: 0" in report
     assert "McNemar" in report
+
+
+def test_pred_error_written(tiny_spider: DataConfig, tmp_path: Path) -> None:
+    bad = "```sql\nSELECT nope FROM singer\n```"
+    out = run_eval(_cfg(tiny_spider, tmp_path, "err"), backend=FakeBackend([bad]))
+    rows = [json.loads(line) for line in (out / "predictions.jsonl").read_text().splitlines()]
+    assert all("no such column" in (r["pred_error"] or "") for r in rows)
+    report = (out / "report.md").read_text()
+    assert "no such column" in report
+    assert "## Per database" in report
+
+
+def test_cluster_ci_contains_point_estimate() -> None:
+    from sqltune.evaluation.metrics import db_cluster_bootstrap_ci
+
+    ref = [
+        {"id": f"q{i}", "db_id": f"db{i % 4}", "col_tolerant_correct": i % 3 == 0}
+        for i in range(40)
+    ]
+    new = [
+        {**r, "col_tolerant_correct": r["col_tolerant_correct"] or i % 2 == 0}
+        for i, r in enumerate(ref)
+    ]
+    delta = (
+        sum(r["col_tolerant_correct"] for r in new) - sum(r["col_tolerant_correct"] for r in ref)
+    ) / 40
+    lo, hi = db_cluster_bootstrap_ci(ref, new, n=500, seed=0)
+    assert lo <= delta <= hi
+    assert db_cluster_bootstrap_ci(ref, new, n=500, seed=0) == (lo, hi)

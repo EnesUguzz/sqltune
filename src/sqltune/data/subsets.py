@@ -15,6 +15,18 @@ from sqltune.config.models import DataConfig
 from sqltune.domain import Example
 
 
+def select_fraction(examples: list[Example], fraction: float, seed: int) -> list[Example]:
+    """First round(fraction * n) examples of one fixed shuffle, in original order; fractions
+    are nested (0.125 is a subset of 0.25 for the same seed), so a learning curve only adds
+    data from point to point."""
+    if fraction >= 1.0:
+        return examples
+    order = list(range(len(examples)))
+    random.Random(seed).shuffle(order)
+    keep = sorted(order[: round(fraction * len(examples))])
+    return [examples[i] for i in keep]
+
+
 def select_subset(examples: list[Example], cfg: DataConfig) -> list[Example]:
     if cfg.subset == "full":
         return examples

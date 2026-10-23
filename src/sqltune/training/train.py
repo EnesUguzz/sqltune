@@ -13,12 +13,13 @@ from __future__ import annotations
 
 import itertools
 import json
+import math
 import os
 import time
 from pathlib import Path
 from typing import Any
 
-from sqltune.config.models import AppConfig
+from sqltune.config.models import AppConfig, TrainConfig
 
 # Tokens that open the assistant turn in Qwen's chat template; the loss mask must cover
 # everything up to and including them.
@@ -66,6 +67,16 @@ def _fix_adapter_base(adapter_dir: Path, base_model: str) -> None:
     path.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
+def warmup_steps(n_records: int, t: TrainConfig) -> int:
+    """Warmup length in optimizer steps from TrainConfig.warmup_ratio (explicit, so it does not
+    depend on how a transformers version interprets a fractional warmup_steps)."""
+    per_epoch = math.ceil(
+        n_records / (t.per_device_train_batch_size * t.gradient_accumulation_steps)
+    )
+    total = t.max_steps or math.ceil(per_epoch * t.num_train_epochs)
+    return math.ceil(t.warmup_ratio * total)
+
+
 def train(cfg: AppConfig) -> Path:
     import mlflow
     import torch
@@ -109,7 +120,7 @@ def train(cfg: AppConfig) -> Path:
         learning_rate=t.learning_rate,
         num_train_epochs=t.num_train_epochs,
         max_steps=t.max_steps or -1,
-        warmup_steps=t.warmup_ratio,  # transformers 5: a value < 1 is a ratio of total steps
+        warmup_steps=warmup_steps(len(dataset), t),
         lr_scheduler_type=t.lr_scheduler_type,
         optim=t.optim,
         weight_decay=t.weight_decay,
@@ -143,10 +154,9 @@ def train(cfg: AppConfig) -> Path:
         trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
         total = sum(p.numel() for p in model.parameters())
         steps = trainer.state.global_step
-        tokens = next(
-            (h["num_tokens"] for h in reversed(trainer.state.log_history) if "num_tokens" in h),
-            None,
-        )
+        # tokens processed: one pass over the dataset per epoch (fractional with max_steps)
+        train_ids: Any = trainer.train_dataset["input_ids"]  # type: ignore[index]
+        tokens = sum(len(ids) for ids in train_ids) * (trainer.state.epoch or 0)
         summary = {
             "runtime_s": runtime,
             "steps": steps,
