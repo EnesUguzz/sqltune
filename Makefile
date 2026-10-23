@@ -4,7 +4,7 @@ LORA ?=
 # Seconds to wait for vLLM to report healthy (first start downloads the model).
 SERVE_WAIT ?= 900
 
-.PHONY: setup test lint format check-env serve serve-down download
+.PHONY: setup test lint format check-env serve serve-down download eval
 
 setup:
 	uv sync --extra train
@@ -36,3 +36,6 @@ serve-down:
 
 download:  ## Spider questions + SQLite DBs -> data/spider/
 	uv run sqltune download
+
+eval:  ## score a model on Spider: make eval CONFIG=experiments/configs/m0/baseline.yaml
+	uv run sqltune eval --config $(CONFIG)

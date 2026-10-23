@@ -52,6 +52,23 @@ def download(
     typer.echo(f"databases: {len(list((root / 'database').iterdir()))} in {root}")
 
 
+@app.command("eval")
+def eval_(
+    config: Annotated[Path, typer.Option(help="Experiment YAML.")],
+) -> None:
+    """Generate SQL for every question with the configured model, score it, write the run."""
+    import json
+
+    from sqltune.config.loader import load_config
+    from sqltune.runner import run_eval
+
+    out = run_eval(load_config(config))
+    metrics = json.loads((out / "metrics.json").read_text(encoding="utf-8"))
+    typer.echo(
+        f"{out}: EX {100 * metrics['ex']:.1f} (col-tolerant {100 * metrics['ex_col_tolerant']:.1f}), n={metrics['n']:.0f}"
+    )
+
+
 @app.command("dummy-adapter")
 def dummy_adapter(
     out: Annotated[Path, typer.Option(help="Output folder.")] = Path("adapters/dummy"),

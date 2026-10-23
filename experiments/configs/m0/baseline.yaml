@@ -1,0 +1,9 @@
+# M0 baseline: Qwen2.5-Coder-3B-Instruct, zero-shot, the shared prompt, all 1034 Spider dev
+# questions. Serve first: `make serve`. Run: `make eval CONFIG=experiments/configs/m0/baseline.yaml`.
+extends: ../base.yaml
+
+run:
+  run_name: m0_baseline    # results/m0_baseline/
+
+inference:
+  model: base              # the base model as served by vLLM (no adapter)
