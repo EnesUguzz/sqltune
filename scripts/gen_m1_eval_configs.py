@@ -38,7 +38,7 @@ GROUPS: dict[str, list[tuple[str, list[str]]]] = {
     "qwen7b": [("qwen7b", ["zero", "retry"])],
     "qwen14b": [("qwen14b", ["zero", "retry"])],
     # M1b: the BIRD+Spider adapter, plus base re-runs on the fixed gold timeout
-    "m1b": [("m1b_mix", ["zero", "rows3retry"]), ("base", ["zero", "rows3retry"])],
+    "m1b": [("m1b_mix", ["zero", "rows3retry"]), ("base", ["zero", "rows3retry"]), ("m0_qlora", ["rows3retry"])],
 }
 
 
