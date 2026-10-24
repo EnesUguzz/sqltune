@@ -17,5 +17,5 @@ training:
   per_device_train_batch_size: 2  # long records: 2 x 8 keeps effective batch 16
   gradient_accumulation_steps: 8
   val_fraction: 0.05              # whole databases, per source
-  eval_steps: 100
+  eval_steps: 200                 # ~4-5 validation passes, ~2.5 min each
   train_sample_rows_mix: 0.5      # half the records show 3 example rows (rows3 eval variant)
