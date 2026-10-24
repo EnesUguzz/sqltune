@@ -9,6 +9,7 @@ run:
 
 data:
   train_sources: [spider, bird]   # 7000 + BIRD train minus world/airline and failing gold
+  spider_train_exclude_dbs: [formula_1, soccer_1]   # same data as BIRD Mini-Dev DBs
 
 training:
   num_train_epochs: 1             # M1a: 1 epoch ~ 2 epochs on Spider (lc_f1 77.3 vs m0 76.8)

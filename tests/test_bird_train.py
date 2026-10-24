@@ -86,3 +86,31 @@ def test_bird_train_dbs_disjoint_from_eval() -> None:
 def test_excluded_dbs_are_not_loaded(tmp_path: Path) -> None:
     cfg = make_bird_train(tmp_path / "data").model_copy(update={"bird_train_exclude_dbs": ["bt1"]})
     assert {e.db_id for e in load_bird_train(cfg)} == {"bt0", "bt2", "bt3"}
+
+
+@pytest.mark.data
+def test_m1b_training_dbs_disjoint_from_bird_eval() -> None:
+    """Every database the M1b run trains on vs BIRD Mini-Dev (name or table similarity >= 0.5),
+    and BIRD train vs Spider dev/test. Spider train vs Spider dev/test is the official Spider
+    split, which has a few look-alike generic schemas (e.g. tracking_orders ~ e_commerce);
+    it is kept as everyone trains on it."""
+    from sqltune.config.loader import load_config
+    from sqltune.data.bird import load_bird
+    from sqltune.data.spider import load_spider
+
+    cfg = load_config(Path("experiments/configs/m1b/train/mix.yaml")).data
+    spider_train = {e.db_id: e.db_path for e in load_spider(cfg, "train")}
+    bird_train = {e.db_id: e.db_path for e in load_bird_train(cfg)}
+    minidev = {e.db_id: e.db_path for e in load_bird(cfg.model_copy(update={"bird_split": "all"}))}
+    spider_eval = {e.db_id: e.db_path for s in ("dev", "test") for e in load_spider(cfg, s)}  # type: ignore[arg-type]
+    pairs = [(t, tp, minidev) for t, tp in (spider_train | bird_train).items()]
+    pairs += [(t, tp, spider_eval) for t, tp in bird_train.items()]
+    flagged = [
+        (t, v)
+        for t, tp, evals in pairs
+        for v, vp in evals.items()
+        if t == v or table_overlap(tp, vp) >= 0.5
+    ]
+    # found on 2026-10-24: Spider train formula_1 == Mini-Dev formula_1 (diag) and soccer_1 ~
+    # european_football_2 (holdout, 0.86); excluded in m1b mix.yaml (spider_train_exclude_dbs)
+    assert flagged == [], flagged

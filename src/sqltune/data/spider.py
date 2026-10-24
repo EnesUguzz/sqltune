@@ -39,4 +39,7 @@ def load_spider(cfg: DataConfig, split: Literal["train", "dev", "test"]) -> list
     examples = _read(cfg, SPLIT_FILES[split], split, f"spider-{split}")
     if split == "train" and cfg.include_train_others:
         examples += _read(cfg, "train_others.json", "train", "spider-trainothers")
+    if split == "train" and cfg.spider_train_exclude_dbs:
+        excluded = set(cfg.spider_train_exclude_dbs)
+        examples = [e for e in examples if e.db_id not in excluded]
     return examples

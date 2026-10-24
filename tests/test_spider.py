@@ -98,3 +98,9 @@ def test_train_fraction_deterministic() -> None:
     assert set(e.id for e in select_fraction(exs, 0.125, seed=13)) <= set(
         e.id for e in select_fraction(exs, 0.25, seed=13)
     )  # nested: a smaller fraction is a subset of a larger one
+
+
+def test_train_exclude_dbs(tiny_spider: DataConfig) -> None:
+    cfg = tiny_spider.model_copy(update={"spider_train_exclude_dbs": ["tiny"]})
+    assert load_spider(cfg, "train") == []
+    assert len(load_spider(cfg, "dev")) == 6  # only train is filtered

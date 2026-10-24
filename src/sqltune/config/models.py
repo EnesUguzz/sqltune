@@ -77,6 +77,16 @@ class DataConfig(_Section):
             "brings evidence hints and large real-world schemas into training."
         ),
     )
+    spider_train_exclude_dbs: list[str] = Field(
+        [],
+        description=(
+            "What: Spider train databases left out of training. Typical: [] for Spider-only "
+            "runs (keeps M0/M1a reproducible); [formula_1, soccer_1] whenever BIRD is "
+            "evaluated: formula_1 is the same data as BIRD Mini-Dev formula_1 (bird_diag) and "
+            "soccer_1 shares 6 of 7 tables with european_football_2 (bird_holdout). "
+            "Effect: 80 + 14 questions fewer; no BIRD eval database is seen in training."
+        ),
+    )
     bird_train_exclude_dbs: list[str] = Field(
         ["world", "airline"],
         description=(
