@@ -1,0 +1,18 @@
+{
+  "n": 250,
+  "n_gold_error": 1,
+  "n_transport_error": 0,
+  "ex": 0.3614457831325301,
+  "ex_col_tolerant": 0.3614457831325301,
+  "rate_correct": 0.3614457831325301,
+  "rate_wrong_result": 0.43775100401606426,
+  "rate_exec_error": 0.20080321285140562,
+  "rate_timeout": 0.0,
+  "rate_too_many_rows": 0.0,
+  "rate_no_sql": 0.0,
+  "latency_p50_ms": 884.9450359999764,
+  "latency_p95_ms": 1656.4010205000554,
+  "mean_prompt_tokens": 940.324,
+  "mean_completion_tokens": 63.476,
+  "generation_s": 137.6983850449999
+}
