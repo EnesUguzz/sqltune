@@ -584,6 +584,15 @@ class RunConfig(_Section):
         Path("results"),
         description="What: folder for run outputs (committed). Effect: none on metrics.",
     )
+    test_once: bool = Field(
+        False,
+        description=(
+            "What: allows loading a test set (Spider test, BIRD bird_holdout). "
+            "Typical: false; true only in the generated final configs. "
+            "Effect: without it the runner refuses test sets, so they are not looked at "
+            "while models and prompts are still being chosen."
+        ),
+    )
 
 
 class AppConfig(BaseSettings):

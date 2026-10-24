@@ -4,11 +4,12 @@ import json
 from pathlib import Path
 
 import pytest
+from conftest import make_tiny_db
 
 from sqltune.config.models import AppConfig, DataConfig, PromptConfig
 from sqltune.evaluation.metrics import compute_metrics, mcnemar_exact_p
 from sqltune.inference.openai_compat import Completion
-from sqltune.runner import run_eval
+from sqltune.runner import TestSetGuardError, load_examples, run_eval
 
 REPO = Path(__file__).parents[1]
 
@@ -159,3 +160,19 @@ def test_retry_only_after_exec_error(tiny_spider: DataConfig, tmp_path: Path) ->
     assert "no such table: singr" in backend.requests[1][0][-1]["content"]
     assert [r["retried"] for r in rows] == [False, True] * 3
     assert all(r["outcome"] == "correct" for r in rows)
+
+
+def test_test_sets_need_test_once(tiny_spider: DataConfig, tmp_path: Path) -> None:
+    root = tiny_spider.data_dir / "spider"
+    make_tiny_db(root / "test_database" / "tiny" / "tiny.sqlite")
+    (root / "test.json").write_text((root / "dev.json").read_text())
+    cfg = _cfg(tiny_spider.model_copy(update={"split": "test"}), tmp_path, "t1")
+    with pytest.raises(TestSetGuardError):
+        load_examples(cfg)
+    holdout = _cfg(
+        tiny_spider.model_copy(update={"dataset": "bird", "bird_split": "holdout"}), tmp_path, "t2"
+    )
+    with pytest.raises(TestSetGuardError):
+        load_examples(holdout)
+    cfg.run.test_once = True
+    assert len(load_examples(cfg)) == 6

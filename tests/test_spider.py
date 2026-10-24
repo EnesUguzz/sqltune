@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
+from conftest import make_tiny_db
 
 from sqltune.config.models import DataConfig
 from sqltune.data import download
@@ -104,3 +105,13 @@ def test_train_exclude_dbs(tiny_spider: DataConfig) -> None:
     cfg = tiny_spider.model_copy(update={"spider_train_exclude_dbs": ["tiny"]})
     assert load_spider(cfg, "train") == []
     assert len(load_spider(cfg, "dev")) == 6  # only train is filtered
+
+
+def test_load_spider_test_split(tiny_spider: DataConfig) -> None:
+    root = tiny_spider.data_dir / "spider"
+    make_tiny_db(root / "test_database" / "tiny" / "tiny.sqlite")
+    (root / "test.json").write_text((root / "dev.json").read_text())
+    examples = load_spider(tiny_spider, "test")
+    assert examples[0].split == "test"
+    assert examples[0].db_path.parent.parent.name == "test_database"
+    assert examples[0].db_path.exists()

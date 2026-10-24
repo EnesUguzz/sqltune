@@ -60,7 +60,24 @@ def _score_all(
         return list(pool.map(_score, jobs, chunksize=16))
 
 
+class TestSetGuardError(RuntimeError):
+    """A test set (Spider test, bird_holdout) was requested by a config without run.test_once."""
+
+    __test__ = False  # not a pytest test class despite the name
+
+
+def _is_test_set(cfg: AppConfig) -> bool:
+    if cfg.data.dataset == "bird":
+        return cfg.data.bird_split == "holdout"
+    return cfg.data.split == "test"
+
+
 def load_examples(cfg: AppConfig) -> list[Example]:
+    if _is_test_set(cfg) and not cfg.run.test_once:
+        raise TestSetGuardError(
+            f"{cfg.run.run_name}: test sets are run once per final model; "
+            "set run.test_once: true in a final config"
+        )
     if cfg.data.dataset == "bird":
         return load_bird(cfg.data)
     return select_subset(load_spider(cfg.data, cfg.data.split), cfg.data)

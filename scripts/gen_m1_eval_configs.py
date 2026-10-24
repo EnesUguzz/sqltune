@@ -4,7 +4,7 @@ Purpose: The M1a matrix is ~40 runs; writing them by hand invites copy errors (w
 name, missing BIRD settings). Each generated file is still a plain, readable config.
 Flow: this script -> experiments/configs/m1/eval/<model>__<variant>__<set>.yaml ->
 `make m1-eval GROUP=<base3b|adapters|qwen7b|qwen14b>` -> results/<run_name>/.
-Params: MODELS / VARIANTS / SETS below.
+Params: VARIANTS / SETS / TEST_SETS / GROUPS below.
 Try: `uv run python scripts/gen_m1_eval_configs.py && ls experiments/configs/m1/eval`.
 """
 
@@ -23,6 +23,16 @@ SETS = {
         "evaluation": {"row_compare": "set", "exec_timeout_s": 30.0},
     },
 }
+# test sets: only in "final*" groups, which also set run.test_once (the runner refuses them
+# otherwise); each final config is run once
+TEST_SETS = {
+    "spidertest": {"data": {"dataset": "spider", "split": "test", "subset": "full"}},
+    "birdholdout": {
+        "data": {"dataset": "bird", "bird_split": "holdout"},
+        "evaluation": {"row_compare": "set", "exec_timeout_s": 30.0},
+    },
+}
+FINAL_VARIANTS = ["zero", "rows3retry"]
 VARIANTS = {
     "zero": {},
     "fewshot3": {"prompt": {"few_shot_k": 3}},
@@ -38,7 +48,15 @@ GROUPS: dict[str, list[tuple[str, list[str]]]] = {
     "qwen7b": [("qwen7b", ["zero", "retry"])],
     "qwen14b": [("qwen14b", ["zero", "retry"])],
     # M1b: the BIRD+Spider adapter, plus base re-runs on the fixed gold timeout
-    "m1b": [("m1b_mix", ["zero", "rows3retry"]), ("base", ["zero", "rows3retry"]), ("m0_qlora", ["rows3retry"])],
+    "m1b": [
+        ("m1b_mix", ["zero", "rows3retry"]),
+        ("base", ["zero", "rows3retry"]),
+        ("m0_qlora", ["rows3retry"]),
+    ],
+    # M1b final rows on the test sets (Task 6)
+    "final3b": [(m, FINAL_VARIANTS) for m in ("base", "m0_qlora", "m1b_mix")],
+    "final7b": [("qwen7b", FINAL_VARIANTS)],
+    "final14b": [("qwen14b", FINAL_VARIANTS)],
 }
 
 
@@ -54,11 +72,17 @@ def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     for group, entries in GROUPS.items():
         for model, variants in entries:
+            final = group.startswith("final")
+            run = (
+                {"experiment_name": "final", "test_once": True}
+                if final
+                else {"experiment_name": "m1a"}
+            )
             for variant in variants:
-                for set_name, set_cfg in SETS.items():
+                for set_name, set_cfg in (TEST_SETS if final else SETS).items():
                     name = f"{model}__{variant}__{set_name}"
                     body = merge(
-                        {"run": {"experiment_name": "m1a", "run_name": f"m1_{name}"}},
+                        {"run": {**run, "run_name": f"m1_{name}"}},
                         {"inference": {"model": model}},
                         set_cfg,
                         VARIANTS[variant],
