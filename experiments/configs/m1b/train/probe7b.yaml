@@ -1,0 +1,8 @@
+# VRAM / speed probe for m1b_mix7b: longest records first, 10 steps, eval every 5.
+extends: probe.yaml
+
+run:
+  run_name: m1b_probe7b
+
+training:
+  base_model: Qwen/Qwen2.5-Coder-7B-Instruct

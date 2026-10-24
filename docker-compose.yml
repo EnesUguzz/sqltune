@@ -12,6 +12,7 @@ services:
     volumes:
       - ${HOME}/.cache/huggingface:/root/.cache/huggingface
       - ./adapters:/adapters:ro
+      - ./models:/models:ro          # merged + quantized fine-tunes (scripts/merge_awq.py)
     environment:
       - HF_TOKEN=${HF_TOKEN:-}
     command: >

@@ -16,3 +16,4 @@ mlflow.db
 # IDE
 .idea/
 .vscode/
+models/

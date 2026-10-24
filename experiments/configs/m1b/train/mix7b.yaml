@@ -1,0 +1,10 @@
+# M1b on 7B: the same data and settings as mix.yaml, base Qwen2.5-Coder-7B-Instruct (QLoRA,
+# frozen NF4 base). Served after merge -> AWQ 4-bit, the same format as the 7B AWQ baseline.
+# Stop vLLM first (`make serve-down`), then `make train CONFIG=experiments/configs/m1b/train/mix7b.yaml`.
+extends: mix.yaml
+
+run:
+  run_name: m1b_mix7b
+
+training:
+  base_model: Qwen/Qwen2.5-Coder-7B-Instruct

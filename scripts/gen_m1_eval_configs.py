@@ -47,6 +47,9 @@ GROUPS: dict[str, list[tuple[str, list[str]]]] = {
     "adapters": [("m0_qlora", ["zero", "retry"])] + [(name, ["zero"]) for name in SWEEP],
     "qwen7b": [("qwen7b", ["zero", "retry"])],
     "qwen14b": [("qwen14b", ["zero", "retry"])],
+    # 7B fine-tune (merged + AWQ) and the 7B AWQ baseline with the same prompt variants
+    "m1b7b": [("m1b_mix7b", ["zero", "rows3retry"])],
+    "qwen7b_rows": [("qwen7b", ["rows3retry"])],
     # M1b: the BIRD+Spider adapter, plus base re-runs on the fixed gold timeout
     "m1b": [
         ("m1b_mix", ["zero", "rows3retry"]),
