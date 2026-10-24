@@ -37,7 +37,7 @@ def main() -> None:
     import torch
     from datasets import Dataset
     from llmcompressor import oneshot
-    from llmcompressor.modifiers.awq import AWQModifier
+    from llmcompressor.modifiers.transform.awq import AWQModifier
     from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
