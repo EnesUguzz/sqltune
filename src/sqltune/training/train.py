@@ -161,6 +161,8 @@ def train(cfg: AppConfig) -> Path:
         start = time.monotonic()
         result = trainer.train()
         runtime = time.monotonic() - start
+        if data.val is not None:  # periodic evals stop before the last <eval_steps steps
+            trainer.evaluate()
 
         model.save_pretrained(str(adapter_dir))
         tokenizer.save_pretrained(str(adapter_dir))
