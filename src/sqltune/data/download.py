@@ -126,16 +126,18 @@ def download_bird_train(cfg: DataConfig) -> Path:
     target = cfg.data_dir / "bird_train"
     raw = cfg.data_dir / "raw"
     zip_path = raw / "bird_train.zip"
-    if (target / "train.json").exists() and (target / "train_databases").exists():
+    done = target / ".extracted"  # written last, so a half-finished extraction is redone
+    if done.exists():
         return target
     if not zip_path.exists():
         _fetch_url(BIRD_TRAIN_ZIP_URL, zip_path)
     target.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(zip_path) as outer:
         names = outer.namelist()
+        names = [n for n in names if not n.startswith("__MACOSX/")]
         questions = next(n for n in names if n.split("/")[-1] == "train.json")
         (target / "train.json").write_bytes(outer.read(questions))
-        inner_name = next((n for n in names if n.endswith("train_databases.zip")), None)
+        inner_name = next((n for n in names if n.split("/")[-1] == "train_databases.zip"), None)
         inner_path = raw / "bird_train_databases.zip"
         if inner_name is not None and not inner_path.exists():
             with outer.open(inner_name) as src, inner_path.open("wb") as dst:
@@ -147,4 +149,5 @@ def download_bird_train(cfg: DataConfig) -> Path:
                 out.parent.mkdir(parents=True, exist_ok=True)
                 with zf.open(member) as src, out.open("wb") as dst:
                     shutil.copyfileobj(src, dst, length=1 << 24)
+    done.touch()
     return target

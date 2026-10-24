@@ -4,8 +4,8 @@ Purpose: M1a showed a Spider-only fine-tune does not help on BIRD; BIRD train (9
 questions on 69 databases, each with an evidence hint) is the in-distribution data. Its
 databases are disjoint from Mini-Dev, so bird_diag / bird_holdout stay unseen.
 Flow: <data_dir>/bird_train/{train.json, train_databases/<db>/<db>.sqlite} (+ optional
-gold_failures.json from scripts/check_bird_train_gold.py) -> load_bird_train().
-Params: DataConfig.bird_train_skip_failing_gold.
+gold_failures.json from scripts/dataset_review.py) -> load_bird_train().
+Params: DataConfig.bird_train_skip_failing_gold, bird_train_exclude_dbs.
 Try: `len(load_bird_train(DataConfig()))`.
 """
 
@@ -41,7 +41,8 @@ def load_bird_train(cfg: DataConfig) -> list[Example]:
         )
         for i, r in enumerate(records)
     ]
-    return [e for e in examples if e.id not in skip]
+    excluded = set(cfg.bird_train_exclude_dbs)
+    return [e for e in examples if e.id not in skip and e.db_id not in excluded]
 
 
 def _tables(db_path: Path) -> set[str]:

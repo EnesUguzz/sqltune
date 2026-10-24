@@ -62,8 +62,11 @@ def test_bird_train_dbs_disjoint_from_eval() -> None:
     from sqltune.data.spider import load_spider
 
     cfg = DataConfig()
+    everything = cfg.model_copy(
+        update={"bird_train_skip_failing_gold": False, "bird_train_exclude_dbs": []}
+    )
+    assert len(load_bird_train(everything)) == 9428
     train = load_bird_train(cfg.model_copy(update={"bird_train_skip_failing_gold": False}))
-    assert len(train) == 9428
     eval_dbs = {e.db_id: e.db_path for e in load_bird(cfg.model_copy(update={"bird_split": "all"}))}
     eval_dbs |= {e.db_id: e.db_path for e in load_spider(cfg, "dev")}
     eval_dbs |= {e.db_id: e.db_path for e in load_spider(cfg, "test")}
@@ -75,4 +78,11 @@ def test_bird_train_dbs_disjoint_from_eval() -> None:
         for e, ep in eval_dbs.items()
         if table_overlap(tp, ep) >= 0.5
     ]
+    # found on 2026-10-24: world == Spider world_1 (same data), airline ~ flight_2 (same
+    # table names); both are in DataConfig.bird_train_exclude_dbs, so nothing is left here
     assert flagged == [], flagged
+
+
+def test_excluded_dbs_are_not_loaded(tmp_path: Path) -> None:
+    cfg = make_bird_train(tmp_path / "data").model_copy(update={"bird_train_exclude_dbs": ["bt1"]})
+    assert {e.db_id for e in load_bird_train(cfg)} == {"bt0", "bt2", "bt3"}

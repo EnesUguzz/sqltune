@@ -77,6 +77,16 @@ class DataConfig(_Section):
             "brings evidence hints and large real-world schemas into training."
         ),
     )
+    bird_train_exclude_dbs: list[str] = Field(
+        ["world", "airline"],
+        description=(
+            "What: BIRD train databases left out of training because they duplicate an eval "
+            "database (table-name fingerprint, tests/test_bird_train.py): `world` holds the "
+            "same data as Spider dev `world_1`; `airline` shares its table names with Spider "
+            "dev `flight_2`. Typical: leave as is. Effect: 191 questions fewer; no eval "
+            "database is seen in training."
+        ),
+    )
     bird_train_skip_failing_gold: bool = Field(
         True,
         description=(
