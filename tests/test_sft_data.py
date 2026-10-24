@@ -169,3 +169,25 @@ def test_spider_only_default_unchanged(tiny_spider: DataConfig) -> None:
     expected = [to_sft_record(ex, PROMPT_CFG) for ex in load_spider(tiny_spider, "train")]
     assert sorted(map(str, data.train)) == sorted(map(str, expected))
     assert data.val is None
+
+
+def test_rows_fall_back_to_plain_when_too_long(tmp_path: Path) -> None:
+    pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
+    plain = build_sft_dataset(_mixed_cfg(tmp_path / "a"), CharTokenizer())
+    longest_plain = max(
+        sum(len(m["content"]) for m in r["prompt"] + r["completion"]) for r in plain.train
+    )
+    cfg = _mixed_cfg(tmp_path / "b", train_sample_rows_mix=1.0, max_seq_length=longest_plain)
+    data = build_sft_dataset(cfg, CharTokenizer())
+    assert data.dropped == {"spider": 0, "bird": 0}
+    assert data.rows_fallback == {"spider": 12, "bird": 12}
+    assert not any(_has_rows(r) for r in data.train)
+
+
+def test_longest_first_orders_records(tmp_path: Path) -> None:
+    pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
+    data = build_sft_dataset(
+        _mixed_cfg(tmp_path, train_sample_rows_mix=0.5, longest_first=True), CharTokenizer()
+    )
+    lengths = [sum(len(m["content"]) for m in r["prompt"] + r["completion"]) for r in data.train]
+    assert lengths == sorted(lengths, reverse=True)

@@ -185,6 +185,7 @@ def train(cfg: AppConfig) -> Path:
             "n_dropped_overlong": sum(data.dropped.values()),
             "final_eval_loss": _last_eval_loss(trainer),
             **{f"n_dropped_overlong_{k}": v for k, v in data.dropped.items()},
+            **{f"n_rows_fallback_{k}": v for k, v in data.rows_fallback.items()},
             **{f"n_{part}_{k}": v[part] for k, v in data.counts.items() for part in v},
         }
         mlflow.log_metrics({k: float(v) for k, v in summary.items() if v is not None})

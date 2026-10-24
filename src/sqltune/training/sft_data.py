@@ -52,6 +52,7 @@ class SftData:
     dropped: dict[str, int]  # source -> records dropped for exceeding max_seq_length
     dropped_by_db: dict[str, int]  # db_id -> dropped records (wide schemas show up here)
     counts: dict[str, dict[str, int]]  # source -> {"train": n, "val": n} after dropping
+    rows_fallback: dict[str, int]  # source -> rows prompts too long, trained without rows
 
 
 def _load_source(cfg: AppConfig, source: str) -> list[Example]:
@@ -72,37 +73,47 @@ def _rows_for(ex: Example, cfg: AppConfig) -> int:
 
 def build_sft_dataset(cfg: AppConfig, tokenizer: ChatTokenizer) -> SftData:
     """Records per source -> nested fraction -> DB-disjoint validation split -> prompt (with
-    or without example rows) -> drop records longer than max_seq_length."""
+    or without example rows; a rows prompt that does not fit falls back to the plain one)
+    -> drop records still longer than max_seq_length."""
     from datasets import Dataset
 
     t = cfg.training
-    out: dict[str, list[dict[str, Any]]] = {"train": [], "val": []}
+    out: dict[str, list[tuple[int, dict[str, Any]]]] = {"train": [], "val": []}
     dropped: dict[str, int] = {}
+    rows_fallback: dict[str, int] = {}
     dropped_by_db: Counter[str] = Counter()
     counts: dict[str, dict[str, int]] = {}
     for source in cfg.data.train_sources:
         examples = select_fraction(_load_source(cfg, source), t.train_fraction, t.seed)
         train, val = split_by_db(examples, t.val_fraction, t.seed)
-        dropped[source] = 0
+        dropped[source] = rows_fallback[source] = 0
         counts[source] = {}
         for part, items in (("train", train), ("val", val)):
             kept = 0
             for ex in items:
-                prompt_cfg = cfg.prompt.model_copy(update={"sample_rows": _rows_for(ex, cfg)})
-                record = to_sft_record(ex, prompt_cfg)
-                if _n_tokens(tokenizer, record["prompt"] + record["completion"]) > t.max_seq_length:
+                rows = _rows_for(ex, cfg)
+                record = to_sft_record(ex, cfg.prompt.model_copy(update={"sample_rows": rows}))
+                n = _n_tokens(tokenizer, record["prompt"] + record["completion"])
+                if n > t.max_seq_length and rows > 0:
+                    rows_fallback[source] += 1
+                    record = to_sft_record(ex, cfg.prompt.model_copy(update={"sample_rows": 0}))
+                    n = _n_tokens(tokenizer, record["prompt"] + record["completion"])
+                if n > t.max_seq_length:
                     dropped[source] += 1
                     dropped_by_db[ex.db_id] += 1
                     continue
-                out[part].append(record)
+                out[part].append((n, record))
                 kept += 1
             counts[source][part] = kept
     if len(cfg.data.train_sources) > 1:
         random.Random(t.seed).shuffle(out["train"])
+    if t.longest_first:  # VRAM probe: the first steps see the longest records
+        out["train"].sort(key=lambda pair: -pair[0])
     return SftData(
-        train=Dataset.from_list(out["train"]),
-        val=Dataset.from_list(out["val"]) if out["val"] else None,
+        train=Dataset.from_list([r for _, r in out["train"]]),
+        val=Dataset.from_list([r for _, r in out["val"]]) if out["val"] else None,
         dropped=dropped,
         dropped_by_db=dict(dropped_by_db),
         counts=counts,
+        rows_fallback=rows_fallback,
     )

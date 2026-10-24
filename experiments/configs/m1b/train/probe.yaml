@@ -1,0 +1,11 @@
+# VRAM / pipeline probe for m1b_mix: longest records first, 10 steps, eval every 5.
+extends: mix.yaml
+
+run:
+  run_name: m1b_probe
+
+training:
+  longest_first: true
+  max_steps: 10
+  eval_steps: 5
+  save_steps: 1000

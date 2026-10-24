@@ -514,6 +514,14 @@ class TrainConfig(_Section):
             "and the rows prompt, so both eval variants match training; longer records."
         ),
     )
+    longest_first: bool = Field(
+        False,
+        description=(
+            "What: order training records longest first instead of shuffled. Typical: false; "
+            "true only for a short VRAM probe (max_steps ~10). Effect: the first steps hit "
+            "peak memory; never use for a real run (biased order)."
+        ),
+    )
     logging_steps: int = Field(
         10,
         ge=1,
