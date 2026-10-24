@@ -10,6 +10,7 @@ save it as data/raw/spider.zip and re-run `sqltune download`.
 
 from __future__ import annotations
 
+import shutil
 import zipfile
 from pathlib import Path
 
@@ -58,6 +59,7 @@ BIRD_QUESTIONS_URL = (
     "mini_dev_sqlite-00000-of-00001.json"
 )
 BIRD_DB_PREFIX = "minidev/MINIDEV/dev_databases/"
+BIRD_TRAIN_ZIP_URL = "https://bird-bench.oss-cn-beijing.aliyuncs.com/train.zip"  # ~8.9 GB
 
 
 def _fetch_url(url: str, dest: Path) -> None:
@@ -100,4 +102,49 @@ def download_bird(cfg: DataConfig) -> Path:
                     out = target / "dev_databases" / name[len(BIRD_DB_PREFIX) :]
                     out.parent.mkdir(parents=True, exist_ok=True)
                     out.write_bytes(zf.read(member))
+    return target
+
+
+def _sqlite_members(zf: zipfile.ZipFile) -> list[tuple[zipfile.ZipInfo, str]]:
+    """(member, db_id) for every <db>/<db>.sqlite inside the zip; other files are ignored and
+    names with '..' are rejected."""
+    out = []
+    for member in zf.infolist():
+        parts = member.filename.split("/")
+        if ".." in parts or not member.filename.endswith(".sqlite") or len(parts) < 2:
+            continue
+        db_id = parts[-2]
+        if parts[-1] == f"{db_id}.sqlite":
+            out.append((member, db_id))
+    return out
+
+
+def download_bird_train(cfg: DataConfig) -> Path:
+    """Ensure <data_dir>/bird_train/ holds train.json and train_databases/<db>/<db>.sqlite from
+    the official BIRD train zip (the databases sit in a zip inside the zip); returns that
+    folder."""
+    target = cfg.data_dir / "bird_train"
+    raw = cfg.data_dir / "raw"
+    zip_path = raw / "bird_train.zip"
+    if (target / "train.json").exists() and (target / "train_databases").exists():
+        return target
+    if not zip_path.exists():
+        _fetch_url(BIRD_TRAIN_ZIP_URL, zip_path)
+    target.mkdir(parents=True, exist_ok=True)
+    with zipfile.ZipFile(zip_path) as outer:
+        names = outer.namelist()
+        questions = next(n for n in names if n.split("/")[-1] == "train.json")
+        (target / "train.json").write_bytes(outer.read(questions))
+        inner_name = next((n for n in names if n.endswith("train_databases.zip")), None)
+        inner_path = raw / "bird_train_databases.zip"
+        if inner_name is not None and not inner_path.exists():
+            with outer.open(inner_name) as src, inner_path.open("wb") as dst:
+                shutil.copyfileobj(src, dst, length=1 << 24)
+        sources = [zipfile.ZipFile(inner_path)] if inner_name is not None else [outer]
+        for zf in sources:
+            for member, db_id in _sqlite_members(zf):
+                out = target / "train_databases" / db_id / f"{db_id}.sqlite"
+                out.parent.mkdir(parents=True, exist_ok=True)
+                with zf.open(member) as src, out.open("wb") as dst:
+                    shutil.copyfileobj(src, dst, length=1 << 24)
     return target

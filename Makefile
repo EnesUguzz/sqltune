@@ -46,6 +46,12 @@ train:  ## fine-tune: make train CONFIG=experiments/configs/m0/qlora.yaml (GPU m
 
 M1_TRAIN ?= lc_f0125 lc_f025 lc_f05 lc_f1 others ep3 lora16 seed2 seed3
 
+dataset-review:  ## gold health, duplicates and SQL mix of every set -> docs/data/dataset-review.md (+ BIRD train gold_failures.json)
+	uv run python scripts/dataset_review.py
+
+train-lengths:  ## token lengths of training records per source, rows 0/3, drops per max_seq_length
+	uv run --extra train python scripts/measure_train_lengths.py
+
 m1-train:  ## M1a training sweep, sequential; a failed run is logged and skipped (~3 h GPU)
 	@mkdir -p outputs
 	@for r in $(M1_TRAIN); do \

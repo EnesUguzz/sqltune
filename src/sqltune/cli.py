@@ -40,7 +40,7 @@ def download(
         "experiments/configs/base.yaml"
     ),
 ) -> None:
-    """Download and unpack Spider (questions + SQLite databases) into <data_dir>/spider/."""
+    """Download Spider, BIRD Mini-Dev and BIRD train (questions + SQLite databases)."""
     from sqltune.config.loader import load_config
     from sqltune.data.download import download_spider
     from sqltune.data.spider import load_spider
@@ -61,6 +61,15 @@ def download(
         f"BIRD Mini-Dev: {len(examples)} questions in {bird_root}; "
         f"diag {len(diag)} ({len({e.db_id for e in diag})} DBs), "
         f"holdout {len(holdout)} ({len({e.db_id for e in holdout})} DBs)"
+    )
+
+    from sqltune.data.bird_train import load_bird_train
+    from sqltune.data.download import download_bird_train
+
+    train_root = download_bird_train(cfg.data)
+    train = load_bird_train(cfg.data)
+    typer.echo(
+        f"BIRD train: {len(train)} questions on {len({e.db_id for e in train})} DBs in {train_root}"
     )
 
 
