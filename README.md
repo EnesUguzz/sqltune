@@ -8,6 +8,13 @@ measured by execution accuracy on Spider and BIRD Mini-Dev.
 > evaluator; strict column order 64.2 → 73.6). 151 questions fixed / 54 broken, McNemar
 > p ≈ 1e-11, after 26 min of training at 3.5 GiB peak VRAM. Details:
 > [docs/decisions/001-m0-first-delta.md](docs/decisions/001-m0-first-delta.md).
+>
+> **M1a (BIRD Mini-Dev diag split, 250 questions):** the Spider fine-tune does not transfer —
+> every adapter is at or below the base model (33.7 EX); example rows + retry give +4.8 with no
+> training; 7B / 14B AWQ reach 48.4 / 57.6. On Spider, more data and other hyperparameters stay
+> within seed noise (76.2–77.9). Details:
+> [docs/decisions/002-m1a-bird-baselines-sweeps.md](docs/decisions/002-m1a-bird-baselines-sweeps.md),
+> table: [results/SUMMARY.md](results/SUMMARY.md).
 
 Prompt-token parity between training and vLLM: `uv run --extra train python
 scripts/check_tokenize.py` (with `make serve LORA=m0_qlora` running) → 22/22 identical.
