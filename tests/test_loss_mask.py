@@ -83,3 +83,11 @@ def test_warmup_steps_from_ratio() -> None:
     )
     assert warmup_steps(6918, cfg) == 26  # ceil(0.03 * ceil(6918 / 16) * 2) = ceil(25.95)
     assert warmup_steps(6918, cfg.model_copy(update={"max_steps": 50})) == 2
+
+
+def test_longest_first_uses_sequential_sampler() -> None:
+    from sqltune.config.models import TrainConfig
+    from sqltune.training.train import sampling_strategy
+
+    assert sampling_strategy(TrainConfig(longest_first=True)) == "sequential"
+    assert sampling_strategy(TrainConfig()) == "random"

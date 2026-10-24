@@ -140,14 +140,20 @@ def download_bird_train(cfg: DataConfig) -> Path:
         inner_name = next((n for n in names if n.split("/")[-1] == "train_databases.zip"), None)
         inner_path = raw / "bird_train_databases.zip"
         if inner_name is not None and not inner_path.exists():
-            with outer.open(inner_name) as src, inner_path.open("wb") as dst:
+            part = inner_path.with_suffix(".part")  # renamed only when complete
+            with outer.open(inner_name) as src, part.open("wb") as dst:
                 shutil.copyfileobj(src, dst, length=1 << 24)
+            part.rename(inner_path)
         sources = [zipfile.ZipFile(inner_path)] if inner_name is not None else [outer]
+        n_dbs = 0
         for zf in sources:
             for member, db_id in _sqlite_members(zf):
                 out = target / "train_databases" / db_id / f"{db_id}.sqlite"
                 out.parent.mkdir(parents=True, exist_ok=True)
                 with zf.open(member) as src, out.open("wb") as dst:
                     shutil.copyfileobj(src, dst, length=1 << 24)
+                n_dbs += 1
+    if n_dbs == 0:
+        raise RuntimeError(f"no .sqlite databases found in {zip_path}")
     done.touch()
     return target

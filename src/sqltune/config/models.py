@@ -127,6 +127,7 @@ class DataConfig(_Section):
         description=(
             "What: half of BIRD Mini-Dev, split by database. 'diag' is used for decisions and "
             "diagnostics; 'holdout' is the headline set, run once per final model. "
+            "'all' includes holdout, so it also needs run.test_once. "
             "Effect: keeps the headline number free of tuning."
         ),
     )

@@ -68,7 +68,7 @@ class TestSetGuardError(RuntimeError):
 
 def _is_test_set(cfg: AppConfig) -> bool:
     if cfg.data.dataset == "bird":
-        return cfg.data.bird_split == "holdout"
+        return cfg.data.bird_split in ("holdout", "all")
     return cfg.data.split == "test"
 
 

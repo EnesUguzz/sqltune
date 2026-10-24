@@ -56,8 +56,11 @@ bootstrap CIs on `bird_diag` are indicative only.
    `bird_diag`, both well above the 5-point rule and significant. The Spider-only adapter
    was at or below the base here (M1a), so the gain comes from BIRD-style data (evidence
    hints, CASE/CAST/date SQL, wide schemas), not from fine-tuning as such.
-2. **The 3B adapter now matches the 7B model on BIRD** (48.8 vs 48.4, McNemar p = 1.0:
-   30 questions each way) at less than half the size. 14B is still 9 points ahead.
+2. **The 3B adapter reaches the 7B AWQ (4-bit) model on BIRD**, with a caveat on dev: the
+   7B dev run used retry without example rows. Here m1b_mix with rows3 + retry scores 48.8 and
+   7B with retry scores 48.4 (McNemar p = 1.0, 30 questions each way). The same-variant
+   comparison is on the test set: 52.2 vs 51.4 (p = 0.89). The 3B is served in bf16, the 7B
+   and 14B as AWQ 4-bit. 14B is still 9 points ahead.
 3. **Spider is not hurt.** m1b_mix vs the Spider-only M0 adapter: −0.6 (zero) and −1.7
    (rows3 + retry), neither significant. One adapter now covers both benchmarks.
 4. **Schema errors drop most.** Share of `no such column` among `bird_diag` predictions:
@@ -71,11 +74,11 @@ bootstrap CIs on `bird_diag` are indicative only.
    | M0 adapter, rows3 + retry | 52.9 | 31.0 | 17.6 |
    | m1b_mix, zero | 60.0 | 44.2 | 31.4 |
    | m1b_mix, rows3 + retry | 60.0 | 46.5 | 39.2 |
-   | 7B, retry | 64.3 | 44.2 | 37.3 |
+   | 7B AWQ, retry (no rows) | 64.3 | 44.2 | 37.3 |
    | 14B, retry | 71.4 | 51.2 | 54.9 |
 
    m1b_mix gains +13 on moderate and +12 on challenging over base (rows3 + retry), and
-   beats 7B on both; the remaining gap to 7B and 14B is mostly on simple questions.
+   beats the 7B retry run on both; the remaining gap to 7B and 14B is mostly on simple questions.
 
 ## What the remaining errors are
 
@@ -137,7 +140,7 @@ McNemar, m1b_mix against:
 
 - BIRD train helps on BIRD: +10.0 zero-shot over base, and +6.0 with rows + retry. That is
   smaller than on `bird_diag` (+10.4), but still above the 5-point rule and significant.
-- The Spider-only M0 adapter is again below the base on BIRD (−4.5 zero-shot), so that finding
+- The Spider-only M0 adapter is again below the base on BIRD (−4.4 zero-shot), so that finding
   was not caused by the `formula_1` overlap in `bird_diag`.
 - m1b_mix ties 7B on BIRD (+0.8, p = 0.89).
 - On Spider, m1b_mix is 1.7 points below 7B (p = 0.04) and level with M0.
@@ -154,12 +157,15 @@ compare models within a set, not across sets.
 - `bird_holdout` is a 6-database subset of Mini-Dev; numbers are not directly comparable to
   published Mini-Dev or BIRD dev scores.
 - Spider test EX is measured with this repo's harness (not the official test-suite).
+- The 3B models are served in bf16 (base + LoRA); 7B and 14B are the official AWQ 4-bit
+  checkpoints, so "3B ≈ 7B" compares a full-precision 3B with a 4-bit 7B.
 - Qwen2.5-Coder may have seen Spider / BIRD during pre-training; absolute scores may be
   inflated, deltas against the same base are still valid.
 
 ## Next (decided 2026-10-24)
 
 - **7B fine-tune** with the same data and settings (`m1b/train/mix7b.yaml`), served as
-  merge → AWQ 4-bit so it is compared with the official 7B AWQ in the same format. Question:
+  merge → AWQ 4-bit. The base 7B is quantized with the same script and calibration set
+  (`scripts/merge_awq.py` without `--adapter`), so the two differ only by the fine-tune. Question:
   does the BIRD-train gain on top of a 7B base close the gap to 14B?
 - Haiku (one-shot, `claude -p`) as a closed-model reference, and a Gradio demo.

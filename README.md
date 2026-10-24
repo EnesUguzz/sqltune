@@ -4,7 +4,7 @@ Fine-tuning Qwen2.5-Coder-3B-Instruct for text-to-SQL (SQLite) with QLoRA, serve
 measured by execution accuracy on Spider and BIRD Mini-Dev.
 
 **Result.** A 3B model fine-tuned with QLoRA on Spider + BIRD train (15k examples, 93 min on
-one 16 GB GPU, 3.9 GiB peak VRAM) **matches the 7B model of the same family on BIRD** and gains
+one 16 GB GPU, 3.9 GiB peak VRAM) **matches the 7B model of the same family (AWQ 4-bit) on BIRD** and gains
 +10 EX over its own base. Numbers are on held-out test sets, each run exactly once:
 
 | model | variant | BIRD holdout EX | Spider test EX | train time / VRAM |
@@ -27,7 +27,7 @@ BIRD holdout = 250 Mini-Dev questions on 6 databases never used for any decision
 
 - **BIRD train is what helps on BIRD.** m1b_mix vs base: +10.0 (zero-shot, McNemar p = 3e-4)
   and +6.0 (rows + retry, p = 0.02). The Spider-only adapter is *below* the base on BIRD.
-- **3B fine-tune ≈ 7B base on BIRD** (52.2 vs 51.4, p = 0.89), 1.7 points behind it on Spider.
+- **3B fine-tune ≈ 7B AWQ base on BIRD** (52.2 vs 51.4, p = 0.89), 1.7 points behind it on Spider.
   14B is still clearly ahead.
 - **Spider is not hurt** by adding BIRD (80.9 vs 80.2 for the Spider-only adapter, p = 0.25).
 
@@ -41,6 +41,10 @@ How it got there, one decision note per milestone:
 - BIRD holdout is a 6-database subset of Mini-Dev; numbers are not directly comparable with
   published Mini-Dev or BIRD-dev leaderboards.
 - Spider test EX comes from this repo's harness, not the official test-suite evaluation.
+- The 3B rows are served in bf16 (base + LoRA adapter); 7B and 14B are the official AWQ
+  4-bit checkpoints (they do not fit the 16 GB card in bf16).
+- The M0 adapter trained on Spider `soccer_1`, which holds the same data as the holdout
+  database `european_football_2`; it still scores below the base on BIRD holdout.
 - Qwen2.5-Coder may have seen Spider / BIRD in pre-training. Absolute scores may be inflated;
   differences against the same base model are still valid.
 - BIRD gold SQL has known semantic errors. In a hand-labelled sample of 40 m1b_mix failures,

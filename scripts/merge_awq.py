@@ -1,17 +1,22 @@
-"""Merge a LoRA adapter into its bf16 base and quantize the result to AWQ 4-bit for vLLM.
+"""Merge a LoRA adapter into its bf16 base (optional) and quantize the result to AWQ 4-bit.
 
 Purpose: A 7B model does not fit the 16 GB card in bf16 under vLLM. Merging the adapter and
-quantizing with AWQ gives the same format as the official Qwen 7B AWQ baseline, so the
-fine-tuned and the base 7B differ only by the fine-tune.
-Flow: bf16 base (CPU) + adapters/<name> -> merge_and_unload -> llm-compressor AWQ
-(W4A16_ASYM, group 128, lm_head kept in bf16; layers onloaded to the GPU one at a time)
-calibrated on outputs/calib/<name>.jsonl -> models/<name>-awq/ (compressed-tensors, served by
-vLLM as `make serve MODEL=/models/<name>-awq`).
-Params: --base, --adapter, --calib, --out, --n (calibration samples, typical 256),
---max-len (tokens per sample, typical 2048).
+quantizing with AWQ makes it servable. The base model is quantized with the same script and
+the same calibration set, so the fine-tuned and the base 7B differ only by the fine-tune
+(the official Qwen AWQ checkpoint uses another tool and generic calibration data).
+Flow: bf16 base (CPU) [+ adapter -> merge_and_unload] -> llm-compressor AWQ scaling +
+W4A16_ASYM quantization (group 128, lm_head kept in bf16; layers onloaded to the GPU one at a
+time) calibrated on outputs/calib/<calib>.jsonl -> models/<name>-awq/ (compressed-tensors,
+served by vLLM as `make serve MODEL=/models/<name>-awq`).
+Params: --base, --adapter (omit to quantize the base alone), --calib, --out, --n (calibration
+samples, typical 256), --max-len (tokens per sample, typical 2048; longer samples are skipped,
+not truncated, so every sample keeps its SQL answer).
+Caveat: the adapter was trained on the NF4 base and is folded into bf16 weights (standard
+practice; the small mismatch is part of what the dev eval measures).
 Runs in its own environment (llm-compressor pins its own torch / transformers):
 `uv venv ~/venvs/awq && VIRTUAL_ENV=~/venvs/awq uv pip install llmcompressor peft`.
-Try: `~/venvs/awq/bin/python scripts/merge_awq.py --adapter adapters/m1b_mix7b`.
+Try: `~/venvs/awq/bin/python scripts/merge_awq.py --adapter adapters/m1b_mix7b
+--calib outputs/calib/m1b_mix7b.jsonl --out models/m1b_mix7b-awq`.
 """
 
 from __future__ import annotations
@@ -24,38 +29,44 @@ from pathlib import Path
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--base", default="Qwen/Qwen2.5-Coder-7B-Instruct")
-    parser.add_argument("--adapter", type=Path, required=True)
-    parser.add_argument("--calib", type=Path, default=None)
-    parser.add_argument("--out", type=Path, default=None)
+    parser.add_argument("--adapter", type=Path, default=None)
+    parser.add_argument("--calib", type=Path, required=True)
+    parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--n", type=int, default=256)
     parser.add_argument("--max-len", type=int, default=2048)
     args = parser.parse_args()
-    name = args.adapter.name
-    calib = args.calib or Path("outputs/calib") / f"{name}.jsonl"
-    out = args.out or Path("models") / f"{name}-awq"
 
     import torch
     from datasets import Dataset
     from llmcompressor import oneshot
+    from llmcompressor.modifiers.quantization import QuantizationModifier
     from llmcompressor.modifiers.transform.awq import AWQModifier
-    from peft import PeftModel
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
     tokenizer = AutoTokenizer.from_pretrained(args.base)
-    model = AutoModelForCausalLM.from_pretrained(args.base, torch_dtype=torch.bfloat16)
-    model = PeftModel.from_pretrained(model, str(args.adapter)).merge_and_unload()
-    print(f"merged {args.adapter} into {args.base}")
+    model = AutoModelForCausalLM.from_pretrained(args.base, dtype=torch.bfloat16)
+    if args.adapter is not None:
+        from peft import PeftModel
 
-    rows = [json.loads(line) for line in calib.read_text(encoding="utf-8").splitlines()]
-    texts = [tokenizer.apply_chat_template(r["messages"], tokenize=False) for r in rows[: args.n]]
+        model = PeftModel.from_pretrained(model, str(args.adapter)).merge_and_unload()
+        print(f"merged {args.adapter} into {args.base}")
+
+    rows = [json.loads(line) for line in args.calib.read_text(encoding="utf-8").splitlines()]
+    texts = [tokenizer.apply_chat_template(r["messages"], tokenize=False) for r in rows]
+    texts = [
+        t for t in texts if len(tokenizer(t, add_special_tokens=False).input_ids) <= args.max_len
+    ]
+    texts = texts[: args.n]
+    print(f"{len(texts)} calibration samples of <= {args.max_len} tokens")
     ds = Dataset.from_dict({"text": texts}).map(
-        lambda b: tokenizer(
-            b["text"], truncation=True, max_length=args.max_len, add_special_tokens=False
-        ),
+        lambda b: tokenizer(b["text"], add_special_tokens=False),
         batched=True,
         remove_columns=["text"],
     )
-    recipe = [AWQModifier(ignore=["lm_head"], scheme="W4A16_ASYM", targets=["Linear"])]
+    recipe = [
+        AWQModifier(),
+        QuantizationModifier(ignore=["lm_head"], scheme="W4A16_ASYM", targets=["Linear"]),
+    ]
     oneshot(
         model=model,
         dataset=ds,
@@ -64,10 +75,10 @@ def main() -> None:
         num_calibration_samples=len(texts),
     )
 
-    out.mkdir(parents=True, exist_ok=True)
-    model.save_pretrained(str(out), save_compressed=True)
-    tokenizer.save_pretrained(str(out))
-    print(f"wrote {out}")
+    args.out.mkdir(parents=True, exist_ok=True)
+    model.save_pretrained(str(args.out), save_compressed=True)
+    tokenizer.save_pretrained(str(args.out))
+    print(f"wrote {args.out}")
 
 
 if __name__ == "__main__":

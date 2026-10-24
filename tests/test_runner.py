@@ -174,5 +174,10 @@ def test_test_sets_need_test_once(tiny_spider: DataConfig, tmp_path: Path) -> No
     )
     with pytest.raises(TestSetGuardError):
         load_examples(holdout)
+    every_bird = _cfg(
+        tiny_spider.model_copy(update={"dataset": "bird", "bird_split": "all"}), tmp_path, "t3"
+    )
+    with pytest.raises(TestSetGuardError):
+        load_examples(every_bird)
     cfg.run.test_once = True
     assert len(load_examples(cfg)) == 6

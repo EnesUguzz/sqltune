@@ -82,6 +82,11 @@ def warmup_steps(n_records: int, t: TrainConfig) -> int:
     return math.ceil(t.warmup_ratio * total)
 
 
+def sampling_strategy(t: TrainConfig) -> str:
+    """The Trainer shuffles records itself; longest_first only holds with a sequential sampler."""
+    return "sequential" if t.longest_first else "random"
+
+
 def train(cfg: AppConfig) -> Path:
     import mlflow
     import torch
@@ -132,8 +137,10 @@ def train(cfg: AppConfig) -> Path:
         weight_decay=t.weight_decay,
         logging_steps=t.logging_steps,
         save_steps=t.save_steps,
+        train_sampling_strategy=sampling_strategy(t),
         eval_strategy="steps" if data.val is not None else "no",
         eval_steps=t.eval_steps,
+        # same size as training: validation records are as long, so this fits too
         per_device_eval_batch_size=t.per_device_train_batch_size,
         save_total_limit=2,
         seed=t.seed,
@@ -161,7 +168,8 @@ def train(cfg: AppConfig) -> Path:
         start = time.monotonic()
         result = trainer.train()
         runtime = time.monotonic() - start
-        if data.val is not None:  # periodic evals stop before the last <eval_steps steps
+        # periodic evals stop before the last <eval_steps steps; skip if one just ran
+        if data.val is not None and trainer.state.global_step % t.eval_steps:
             trainer.evaluate()
 
         model.save_pretrained(str(adapter_dir))
