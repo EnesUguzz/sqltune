@@ -28,6 +28,24 @@ def flatten(data: dict[str, Any], prefix: str = "") -> dict[str, Any]:
     return out
 
 
+def run_tags(cfg: AppConfig) -> dict[str, str]:
+    """Tags that make runs filterable in the MLflow UI: for an eval of a fine-tuned adapter,
+    the training run it came from (results/<adapter>/train_summary.json); for runs named
+    m1_<model>__<variant>__<set>, the prompt variant and eval set."""
+    import json
+
+    tags: dict[str, str] = {}
+    summary = cfg.run.results_dir / cfg.inference.model / "train_summary.json"
+    if summary.exists():
+        data = json.loads(summary.read_text(encoding="utf-8"))
+        tags["train_run"] = cfg.inference.model
+        tags["train_mlflow_run_id"] = str(data.get("mlflow_run_id", ""))
+    parts = cfg.run.run_name.split("__")
+    if len(parts) == 3:
+        tags["prompt_variant"], tags["eval_set"] = parts[1], parts[2]
+    return tags
+
+
 def log_to_mlflow(cfg: AppConfig, metrics: dict[str, float], run_dir: Path) -> str:
     import mlflow  # heavy import, only when a run is logged
 
@@ -37,5 +55,6 @@ def log_to_mlflow(cfg: AppConfig, metrics: dict[str, float], run_dir: Path) -> s
     with mlflow.start_run(run_name=cfg.run.run_name) as run:
         mlflow.log_params({k: str(v)[:MAX_PARAM_CHARS] for k, v in params.items()})
         mlflow.log_metrics(metrics)
+        mlflow.set_tags(run_tags(cfg))
         mlflow.log_artifacts(str(run_dir))
         return str(run.info.run_id)
