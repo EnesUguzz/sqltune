@@ -1,0 +1,12 @@
+{
+  "runtime_s": 1989.749231988,
+  "steps": 866,
+  "steps_per_s": 0.43523072459475776,
+  "tokens_per_s": 3588.6009579538127,
+  "peak_vram_gib": 3.5172290802001953,
+  "final_train_loss": 0.08044751294765957,
+  "trainable_params": 29933568,
+  "trainable_ratio": 0.01731659174973876,
+  "n_records": 6918,
+  "n_dropped_overlong": 82
+}
