@@ -67,6 +67,22 @@ class DataConfig(_Section):
             "with evidence). Effect: picks loader and databases; training always uses Spider."
         ),
     )
+    bird_diag_dbs: list[str] = Field(
+        [
+            "california_schools",
+            "card_games",
+            "formula_1",
+            "superhero",
+            "thrombosis_prediction",
+        ],
+        description=(
+            "What: the BIRD Mini-Dev databases that form the diag half; every other database "
+            "is holdout. Chosen once as the subset whose question count is closest to 250 of "
+            "500 and pinned here so no other setting (e.g. `seed`) can move holdout questions "
+            "into diag. Typical: leave as is. Effect: changing it changes which questions you "
+            "tune on; never put a holdout database here."
+        ),
+    )
     bird_split: Literal["diag", "holdout", "all"] = Field(
         "diag",
         description=(
@@ -231,6 +247,15 @@ class InferenceConfig(_Section):
 
 
 class EvalConfig(_Section):
+    gold_timeout_s: float = Field(
+        120.0,
+        gt=0,
+        description=(
+            "What: max seconds for the gold (reference) query; the larger of this and "
+            "exec_timeout_s is used. Typical: 120. Effect: slow but valid gold queries (some "
+            "BIRD ones take ~26 s) are scored instead of randomly becoming gold_error."
+        ),
+    )
     exec_timeout_s: float = Field(
         5.0,
         gt=0,

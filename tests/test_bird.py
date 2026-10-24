@@ -42,22 +42,24 @@ def test_bird_loader_fields(tmp_path: Path) -> None:
     assert first.difficulty == "simple"
 
 
-def test_split_disjoint_dbs(tmp_path: Path) -> None:
-    diag, holdout = split_bird(load_bird(_bird_dir(tmp_path)), seed=13)
-    assert {e.db_id for e in diag}.isdisjoint({e.db_id for e in holdout})
-    assert len(diag) + len(holdout) == 30
-    assert 10 <= len(diag) <= 20
+def test_split_uses_pinned_dbs(tmp_path: Path) -> None:
+    diag, holdout = split_bird(load_bird(_bird_dir(tmp_path)), ["db0", "db3"])
+    assert {e.db_id for e in diag} == {"db0", "db3"}
+    assert {e.db_id for e in holdout} == {"db1", "db2", "db4", "db5"}
 
 
-def test_split_deterministic(tmp_path: Path) -> None:
-    examples = load_bird(_bird_dir(tmp_path))
-    assert split_bird(examples, 13) == split_bird(examples, 13)
+def test_split_does_not_depend_on_seed(tmp_path: Path) -> None:
+    cfg = _bird_dir(tmp_path).model_copy(update={"bird_split": "diag", "bird_diag_dbs": ["db1"]})
+    assert load_bird(cfg) == load_bird(cfg.model_copy(update={"seed": 14}))
+    assert {e.db_id for e in load_bird(cfg)} == {"db1"}
 
 
 @pytest.mark.parametrize("split", ["diag", "holdout"])
 def test_bird_split_selected_by_config(tmp_path: Path, split: str) -> None:
     cfg = _bird_dir(tmp_path).model_copy(update={"bird_split": split})
-    diag, holdout = split_bird(load_bird(cfg.model_copy(update={"bird_split": "all"})), cfg.seed)
+    diag, holdout = split_bird(
+        load_bird(cfg.model_copy(update={"bird_split": "all"})), cfg.bird_diag_dbs
+    )
     expected = diag if split == "diag" else holdout
     assert load_bird(cfg) == expected
 
@@ -67,6 +69,13 @@ def test_real_bird_counts() -> None:
     cfg = DataConfig(dataset="bird", bird_split="all")
     examples = load_bird(cfg)
     assert len(examples) == 500
-    diag, holdout = split_bird(examples, cfg.seed)
-    print(f"diag {len(diag)} on {sorted({e.db_id for e in diag})}")
-    print(f"holdout {len(holdout)} on {sorted({e.db_id for e in holdout})}")
+    diag, holdout = split_bird(examples, cfg.bird_diag_dbs)
+    assert (len(diag), len(holdout)) == (250, 250)
+    assert sorted({e.db_id for e in holdout}) == [
+        "codebase_community",
+        "debit_card_specializing",
+        "european_football_2",
+        "financial",
+        "student_club",
+        "toxicology",
+    ]

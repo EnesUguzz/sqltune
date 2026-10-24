@@ -56,7 +56,7 @@ def download(
 
     bird_root = download_bird(cfg.data)
     examples = load_bird(cfg.data.model_copy(update={"bird_split": "all"}))
-    diag, holdout = split_bird(examples, cfg.data.seed)
+    diag, holdout = split_bird(examples, cfg.data.bird_diag_dbs)
     typer.echo(
         f"BIRD Mini-Dev: {len(examples)} questions in {bird_root}; "
         f"diag {len(diag)} ({len({e.db_id for e in diag})} DBs), "

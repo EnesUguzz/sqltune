@@ -4,7 +4,7 @@ Purpose: Model SQL is untrusted: it may write, loop forever or return millions o
 Connections are read-only, every query has a deadline and a row cap, so one bad answer
 cannot corrupt a database or stall a 1000-question run.
 Flow: pred SQL + Example -> execute() (gold result cached) -> compare.results_match() -> Outcome.
-Params: EvalConfig.exec_timeout_s, EvalConfig.max_result_rows.
+Params: EvalConfig.exec_timeout_s, EvalConfig.gold_timeout_s, EvalConfig.max_result_rows.
 Try: `execute(Path(".../concert_singer.sqlite"), "SELECT count(*) FROM singer", EvalConfig())`.
 """
 
@@ -68,6 +68,7 @@ def execute(db_path: Path, sql: str, cfg: EvalConfig) -> ExecResult:
 
 
 def _gold_result(ex: Example, cfg: EvalConfig) -> ExecResult:
+    cfg = cfg.model_copy(update={"exec_timeout_s": max(cfg.exec_timeout_s, cfg.gold_timeout_s)})
     key = (ex.db_path, ex.gold_sql, cfg.exec_timeout_s, cfg.max_result_rows)
     with _gold_lock:
         cached = _gold_cache.get(key)

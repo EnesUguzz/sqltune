@@ -9,10 +9,11 @@ measured by execution accuracy on Spider and BIRD Mini-Dev.
 > p ≈ 1e-11, after 26 min of training at 3.5 GiB peak VRAM. Details:
 > [docs/decisions/001-m0-first-delta.md](docs/decisions/001-m0-first-delta.md).
 >
-> **M1a (BIRD Mini-Dev diag split, 250 questions):** the Spider fine-tune does not transfer —
-> every adapter is at or below the base model (33.7 EX); example rows + retry give +4.8 with no
-> training; 7B / 14B AWQ reach 48.4 / 57.6. On Spider, more data and other hyperparameters stay
-> within seed noise (76.2–77.9). Details:
+> **M1a (BIRD Mini-Dev diag split, 250 questions):** the Spider-only fine-tune does not
+> help on BIRD — every adapter is at or below the base model (33.7 EX), though part of this may
+> be that adapters never saw BIRD's evidence line in training; example rows + retry give +4.8
+> with no training; 7B / 14B AWQ (with retry) reach 48.4 / 57.6. On Spider, the full-data
+> adapters (rank, epochs, seeds) all land within 76.2–77.9, about the seed-to-seed spread. Details:
 > [docs/decisions/002-m1a-bird-baselines-sweeps.md](docs/decisions/002-m1a-bird-baselines-sweeps.md),
 > table: [results/SUMMARY.md](results/SUMMARY.md).
 
@@ -65,6 +66,12 @@ prompt (BIRD's standard setup). The set is split by database:
 | `diag` | 250 | california_schools, card_games, formula_1, superhero, thrombosis_prediction | decisions, diagnostics |
 | `holdout` | 250 | codebase_community, debit_card_specializing, european_football_2, financial, student_club, toxicology | headline numbers, once per final model |
 
-Gold self-check: 499 of the 500 gold queries reproduce their own result. `bird-0340` does not
-finish in 30 s and counts as `gold_error`. BIRD runs use `row_compare: set` (like BIRD's
-official evaluator) and `exec_timeout_s: 30`.
+The split is pinned in `DataConfig.bird_diag_dbs` (chosen once as the database subset closest
+to 250 questions), so no seed or other setting can move holdout questions into diag.
+
+Gold queries get their own timeout (`gold_timeout_s`, 120 s), because some BIRD gold
+queries take ~26 s and would otherwise flip to `gold_error` from run to run (this happened
+to `bird-0393` in 7 of the 20 M1a `bird_diag` runs, before this setting existed). BIRD runs
+use `row_compare: set` and `exec_timeout_s: 30`. BIRD's official evaluator also compares sets
+of rows but keeps column order, so the **strict** EX (in brackets in the tables) is the number
+comparable to published BIRD results; the headline EX additionally tolerates column order.

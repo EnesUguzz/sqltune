@@ -125,3 +125,16 @@ def test_set_compare_ignores_duplicates_and_order() -> None:
     pred = [(2,), (1,)]
     assert results_match(gold, pred, order_matters=True, row_compare="set")
     assert not results_match(gold, pred, order_matters=False, row_compare="multiset")
+
+
+SLOW = (
+    "WITH RECURSIVE c(x) AS (SELECT 1 UNION ALL SELECT x + 1 FROM c WHERE x < 2000000) "
+    "SELECT count(*) FROM c"
+)
+
+
+def test_gold_gets_its_own_timeout(tiny_db: Path) -> None:
+    # a slow gold must not flip to gold_error when the prediction timeout is tight
+    cfg = EvalConfig(exec_timeout_s=0.01, gold_timeout_s=60.0)
+    outcome, _, _ = score_example(_ex(tiny_db, SLOW), "SELECT 1", cfg)
+    assert outcome != "gold_error"
