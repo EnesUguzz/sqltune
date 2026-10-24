@@ -61,7 +61,7 @@ m1-train:  ## M1a training sweep, sequential; a failed run is logged and skipped
 	done
 
 SERVED_NAME ?= base
-ADAPTERS ?= m0_qlora lc_f0125 lc_f025 lc_f05 lc_f1 others ep3 lora16 seed2 seed3
+ADAPTERS ?= m0_qlora lc_f0125 lc_f025 lc_f05 lc_f1 others ep3 lora16 seed2 seed3 m1b_mix
 
 serve-multi:  ## base model + every adapter in ADAPTERS, each served under its own name
 	$(MAKE) --no-print-directory serve LORA= SERVED_NAME=$(SERVED_NAME) \
