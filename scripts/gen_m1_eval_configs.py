@@ -50,6 +50,8 @@ GROUPS: dict[str, list[tuple[str, list[str]]]] = {
     # 7B fine-tune (merged + AWQ) and the 7B AWQ baseline with the same prompt variants
     "m1b7b": [("m1b_mix7b", ["zero", "rows3retry"])],
     "qwen7b_rows": [("qwen7b", ["rows3retry"])],
+    # base 7B quantized by scripts/merge_awq.py with the same calibration as m1b_mix7b
+    "qwen7b_own": [("qwen7b_own", ["zero", "rows3retry"])],
     # M1b: the BIRD+Spider adapter, plus base re-runs on the fixed gold timeout
     "m1b": [
         ("m1b_mix", ["zero", "rows3retry"]),
