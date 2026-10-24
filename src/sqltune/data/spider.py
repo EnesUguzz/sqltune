@@ -1,8 +1,9 @@
 """Read Spider questions into Example records.
 
 Purpose: Turns the dataset's JSON files into typed examples that point at their SQLite file.
-Flow: <data_dir>/spider/{train_spider,dev}.json -> load_spider() -> list[Example].
-Params: DataConfig.data_dir; split "train" (7000) or "dev" (1034).
+Flow: <data_dir>/spider/{train_spider,dev,test}.json -> load_spider() -> list[Example].
+Params: DataConfig.data_dir; split "train" (7000), "dev" (1034) or "test" (2147, its own
+test_database/ folder; run once per final model).
 Try: `len(load_spider(DataConfig(), "dev"))`.
 """
 
@@ -14,7 +15,8 @@ from typing import Literal
 from sqltune.config.models import DataConfig
 from sqltune.domain import Example
 
-SPLIT_FILES = {"train": "train_spider.json", "dev": "dev.json"}
+SPLIT_FILES = {"train": "train_spider.json", "dev": "dev.json", "test": "test.json"}
+DB_FOLDERS = {"train": "database", "dev": "database", "test": "test_database"}
 
 
 def _read(cfg: DataConfig, filename: str, split: str, prefix: str) -> list[Example]:
@@ -25,7 +27,7 @@ def _read(cfg: DataConfig, filename: str, split: str, prefix: str) -> list[Examp
             id=f"{prefix}-{i:04d}",
             split=split,
             db_id=r["db_id"],
-            db_path=root / "database" / r["db_id"] / f"{r['db_id']}.sqlite",
+            db_path=root / DB_FOLDERS[split] / r["db_id"] / f"{r['db_id']}.sqlite",
             question=r["question"],
             gold_sql=r["query"],
         )
@@ -33,7 +35,7 @@ def _read(cfg: DataConfig, filename: str, split: str, prefix: str) -> list[Examp
     ]
 
 
-def load_spider(cfg: DataConfig, split: Literal["train", "dev"]) -> list[Example]:
+def load_spider(cfg: DataConfig, split: Literal["train", "dev", "test"]) -> list[Example]:
     examples = _read(cfg, SPLIT_FILES[split], split, f"spider-{split}")
     if split == "train" and cfg.include_train_others:
         examples += _read(cfg, "train_others.json", "train", "spider-trainothers")

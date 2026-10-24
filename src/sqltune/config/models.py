@@ -29,11 +29,12 @@ class DataConfig(_Section):
             "Effect: none on metrics; Spider lands in <data_dir>/spider/."
         ),
     )
-    split: Literal["train", "dev"] = Field(
+    split: Literal["train", "dev", "test"] = Field(
         "dev",
         description=(
             "What: Spider split to evaluate on. Typical: dev. "
-            "Effect: 'train' only for sanity checks; scores on train are inflated after SFT."
+            "Effect: 'train' only for sanity checks; scores on train are inflated after SFT. "
+            "'test' is run once per final model (needs run.test_once)."
         ),
     )
     subset: Literal["full", "dev_small"] = Field(
@@ -65,6 +66,24 @@ class DataConfig(_Section):
         description=(
             "What: benchmark to evaluate on. 'bird' = BIRD Mini-Dev (SQLite, 500 questions, "
             "with evidence). Effect: picks loader and databases; training always uses Spider."
+        ),
+    )
+    train_sources: list[Literal["spider", "bird"]] = Field(
+        ["spider"],
+        min_length=1,
+        description=(
+            "What: datasets the fine-tune is trained on (Spider train_spider.json, BIRD "
+            "train.json). Typical: [spider] (M0/M1a), [spider, bird] (M1b). Effect: adding BIRD "
+            "brings evidence hints and large real-world schemas into training."
+        ),
+    )
+    bird_train_skip_failing_gold: bool = Field(
+        True,
+        description=(
+            "What: skip BIRD train questions listed in bird_train/gold_failures.json (gold SQL "
+            "that errors, times out or returns too many rows; written by "
+            "`make bird-train-gold`). Typical: true. Effect: the model is not trained to "
+            "reproduce SQL that does not run."
         ),
     )
     bird_diag_dbs: list[str] = Field(
@@ -445,6 +464,44 @@ class TrainConfig(_Section):
         description=(
             "What: AdamW weight decay on adapter weights. Typical: 0.0-0.01. "
             "Effect: mild regularization."
+        ),
+    )
+    val_fraction: float = Field(
+        0.0,
+        ge=0.0,
+        lt=0.5,
+        description=(
+            "What: share of each training source held out as validation, by whole database. "
+            "Typical: 0 (no validation) or 0.05. Effect: eval_loss is logged every eval_steps "
+            "to spot overfitting; those questions are not trained on."
+        ),
+    )
+    eval_steps: int = Field(
+        200,
+        ge=1,
+        description=(
+            "What: compute validation loss every N optimizer steps (when val_fraction > 0). "
+            "Typical: 200 (~5 points per epoch). Effect: each pass costs ~1-2 min."
+        ),
+    )
+    train_sample_rows: int = Field(
+        3,
+        ge=0,
+        le=10,
+        description=(
+            "What: example rows per table used for the training records that get rows (see "
+            "train_sample_rows_mix). Typical: 3, same as the rows3 eval variant. Effect: must "
+            "match the eval setting so the rows prompt is in-distribution."
+        ),
+    )
+    train_sample_rows_mix: float = Field(
+        0.0,
+        ge=0.0,
+        le=1.0,
+        description=(
+            "What: probability that a training record shows example rows (seeded per "
+            "question). Typical: 0 (M0/M1a), 0.5 (M1b). Effect: the model sees both the plain "
+            "and the rows prompt, so both eval variants match training; longer records."
         ),
     )
     logging_steps: int = Field(

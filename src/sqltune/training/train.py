@@ -67,6 +67,11 @@ def _fix_adapter_base(adapter_dir: Path, base_model: str) -> None:
     path.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
+def _last_eval_loss(trainer: Any) -> float | None:
+    losses = [h["eval_loss"] for h in trainer.state.log_history if "eval_loss" in h]
+    return losses[-1] if losses else None
+
+
 def warmup_steps(n_records: int, t: TrainConfig) -> int:
     """Warmup length in optimizer steps from TrainConfig.warmup_ratio (explicit, so it does not
     depend on how a transformers version interprets a fractional warmup_steps)."""
@@ -107,7 +112,8 @@ def train(cfg: AppConfig) -> Path:
         use_gradient_checkpointing="unsloth",
         random_state=t.seed,
     )
-    dataset, n_dropped = build_sft_dataset(cfg, tokenizer)
+    data = build_sft_dataset(cfg, tokenizer)
+    dataset = data.train
 
     args = SFTConfig(
         output_dir=str(adapter_dir / "checkpoints"),
@@ -126,12 +132,21 @@ def train(cfg: AppConfig) -> Path:
         weight_decay=t.weight_decay,
         logging_steps=t.logging_steps,
         save_steps=t.save_steps,
+        eval_strategy="steps" if data.val is not None else "no",
+        eval_steps=t.eval_steps,
+        per_device_eval_batch_size=t.per_device_train_batch_size,
         save_total_limit=2,
         seed=t.seed,
         bf16=True,
         report_to="mlflow",
     )
-    trainer = SFTTrainer(model=model, processing_class=tokenizer, train_dataset=dataset, args=args)
+    trainer = SFTTrainer(
+        model=model,
+        processing_class=tokenizer,
+        train_dataset=dataset,
+        eval_dataset=data.val,
+        args=args,
+    )
     check_loss_mask(
         next(iter(trainer.get_train_dataloader())),
         tokenizer,
@@ -141,7 +156,7 @@ def train(cfg: AppConfig) -> Path:
     mlflow.set_tracking_uri(cfg.evaluation.mlflow_tracking_uri)
     mlflow.set_experiment(cfg.run.experiment_name)
     os.environ["MLFLOW_TRACKING_URI"] = cfg.evaluation.mlflow_tracking_uri
-    with mlflow.start_run(run_name=cfg.run.run_name):  # the HF callback logs into this run
+    with mlflow.start_run(run_name=cfg.run.run_name) as run:  # the HF callback logs here
         torch.cuda.reset_peak_memory_stats()
         start = time.monotonic()
         result = trainer.train()
@@ -167,11 +182,19 @@ def train(cfg: AppConfig) -> Path:
             "trainable_params": trainable,
             "trainable_ratio": trainable / total,
             "n_records": len(dataset),
-            "n_dropped_overlong": n_dropped,
+            "n_dropped_overlong": sum(data.dropped.values()),
+            "final_eval_loss": _last_eval_loss(trainer),
+            **{f"n_dropped_overlong_{k}": v for k, v in data.dropped.items()},
+            **{f"n_{part}_{k}": v[part] for k, v in data.counts.items() for part in v},
+        }
+        mlflow.log_metrics({k: float(v) for k, v in summary.items() if v is not None})
+        record = {
+            **summary,
+            "mlflow_run_id": run.info.run_id,
+            "dropped_by_db": data.dropped_by_db,
         }
         (results_dir / "train_summary.json").write_text(
-            json.dumps(summary, indent=2), encoding="utf-8"
+            json.dumps(record, indent=2), encoding="utf-8"
         )
-        mlflow.log_metrics({k: float(v) for k, v in summary.items() if v is not None})
         mlflow.log_artifact(str(results_dir / "train_summary.json"))
     return adapter_dir

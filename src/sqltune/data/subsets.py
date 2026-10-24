@@ -27,6 +27,28 @@ def select_fraction(examples: list[Example], fraction: float, seed: int) -> list
     return [examples[i] for i in keep]
 
 
+def split_by_db(
+    examples: list[Example], fraction: float, seed: int
+) -> tuple[list[Example], list[Example]]:
+    """(train, val): whole databases, in a seeded shuffled order, go to val until it holds at
+    least `fraction` of the questions; at least one database always stays in train. Questions
+    of one database are near-duplicates in style, so a per-question split would leak."""
+    dbs = sorted({e.db_id for e in examples})
+    if fraction <= 0 or len(dbs) < 2:
+        return examples, []
+    random.Random(seed).shuffle(dbs)
+    sizes = {db: sum(1 for e in examples if e.db_id == db) for db in dbs}
+    val_dbs: set[str] = set()
+    for db in dbs[:-1]:
+        if sum(sizes[d] for d in val_dbs) >= fraction * len(examples):
+            break
+        val_dbs.add(db)
+    return (
+        [e for e in examples if e.db_id not in val_dbs],
+        [e for e in examples if e.db_id in val_dbs],
+    )
+
+
 def select_subset(examples: list[Example], cfg: DataConfig) -> list[Example]:
     if cfg.subset == "full":
         return examples

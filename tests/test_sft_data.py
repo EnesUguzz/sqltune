@@ -50,14 +50,13 @@ class CharTokenizer:
 def test_overlong_records_dropped_and_counted(tiny_spider: DataConfig) -> None:
     pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
     cfg = AppConfig(data=tiny_spider, prompt=PROMPT_CFG, run={"run_name": "t"})
-    _, dropped = build_sft_dataset(cfg, CharTokenizer())
-    assert dropped == 0
+    assert build_sft_dataset(cfg, CharTokenizer()).dropped == {"spider": 0}
     short = cfg.model_copy(
         update={"training": cfg.training.model_copy(update={"max_seq_length": 256})}
     )
-    dataset, dropped = build_sft_dataset(short, CharTokenizer())
-    assert dropped == 4  # every tiny record is > 256 characters once the schema is included
-    assert len(dataset) == 0
+    data = build_sft_dataset(short, CharTokenizer())
+    assert data.dropped == {"spider": 4}  # every tiny record is > 256 chars with the schema
+    assert len(data.train) == 0
 
 
 @pytest.mark.data
@@ -92,7 +91,81 @@ def test_record_fits_max_seq_length() -> None:
 
     tok = AutoTokenizer.from_pretrained("Qwen/Qwen2.5-Coder-3B-Instruct")
     cfg = AppConfig(run={"run_name": "t"})
-    dataset, dropped = build_sft_dataset(cfg, tok)
+    data = build_sft_dataset(cfg, tok)
+    dataset, dropped = data.train, data.dropped["spider"]
     print(f"train records: {len(dataset)}, dropped as overlong: {dropped}")
     # 82 baseball_1 questions (max 2336 tokens) exceed 2048; the longest dev record is 1016
     assert dropped < 0.02 * (len(dataset) + dropped)
+
+
+def _mixed_cfg(tmp_path: Path, **training: Any) -> AppConfig:
+    """Spider with 4 DBs x 3 questions plus BIRD train with 4 DBs x 3 questions."""
+    import json
+
+    from conftest import make_tiny_db
+    from test_bird_train import make_bird_train
+
+    data = tmp_path / "data"
+    spider = data / "spider"
+    records = []
+    for d in range(4):
+        make_tiny_db(spider / "database" / f"sp{d}" / f"sp{d}.sqlite")
+        records += [
+            {"db_id": f"sp{d}", "question": f"Q{q}?", "query": "SELECT count(*) FROM singer"}
+            for q in range(3)
+        ]
+    (spider / "train_spider.json").write_text(json.dumps(records), encoding="utf-8")
+    make_bird_train(data)
+    return AppConfig(
+        data=DataConfig(data_dir=data, train_sources=["spider", "bird"]),
+        prompt=PROMPT_CFG.model_copy(
+            update={"evidence_template": REPO / "prompts/sql_single_evidence.md"}
+        ),
+        run={"run_name": "t"},
+        training=training,
+    )
+
+
+def _has_rows(record: dict[str, Any]) -> bool:
+    return "example rows from" in record["prompt"][-1]["content"]
+
+
+def test_sources_mixed_with_db_disjoint_val(tmp_path: Path) -> None:
+    pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
+    data = build_sft_dataset(_mixed_cfg(tmp_path, val_fraction=0.2), CharTokenizer())
+    assert data.counts["spider"]["train"] + data.counts["spider"]["val"] == 12
+    assert data.counts["bird"]["val"] > 0 and data.counts["spider"]["val"] > 0
+    assert data.val is not None and len(data.train) + len(data.val) == 24
+
+
+def test_rows_mix_assigns_both_prompts(tmp_path: Path) -> None:
+    pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
+    none = build_sft_dataset(_mixed_cfg(tmp_path / "a"), CharTokenizer())
+    assert not any(_has_rows(r) for r in none.train)
+    mixed = build_sft_dataset(
+        _mixed_cfg(tmp_path / "b", train_sample_rows_mix=0.5), CharTokenizer()
+    )
+    flags = [_has_rows(r) for r in mixed.train]
+    assert any(flags) and not all(flags)
+    again = build_sft_dataset(
+        _mixed_cfg(tmp_path / "c", train_sample_rows_mix=0.5), CharTokenizer()
+    )
+    assert [_has_rows(r) for r in again.train] == flags
+
+
+def test_dropped_counted_per_source_and_db(tmp_path: Path) -> None:
+    pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
+    data = build_sft_dataset(_mixed_cfg(tmp_path, max_seq_length=256), CharTokenizer())
+    assert data.dropped == {"spider": 12, "bird": 12}
+    assert data.dropped_by_db["bt0"] == 3
+
+
+def test_spider_only_default_unchanged(tiny_spider: DataConfig) -> None:
+    pytest.importorskip("datasets", reason="needs the train extra: uv sync --extra train")
+    from sqltune.data.spider import load_spider
+
+    cfg = AppConfig(data=tiny_spider, prompt=PROMPT_CFG, run={"run_name": "t"})
+    data = build_sft_dataset(cfg, CharTokenizer())
+    expected = [to_sft_record(ex, PROMPT_CFG) for ex in load_spider(tiny_spider, "train")]
+    assert sorted(map(str, data.train)) == sorted(map(str, expected))
+    assert data.val is None

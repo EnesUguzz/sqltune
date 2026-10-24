@@ -40,6 +40,37 @@ Eval matrisi M1a'daki gibi `scripts/gen_m1_eval_configs.py` ve `make m1-eval GRO
 4. **Validation soru bazında ayrılıyor veya bir kaynak hiç validation almıyor.** Ayrım veritabanı bazında, deterministik ve kaynak başına yapılır. (Test: Task 2 `test_split_by_db_*`)
 5. **Geliştirme sırasında test seti yanlışlıkla koşuluyor.** `run.test_once: true` olmayan bir config Spider test veya `bird_holdout` yüklerse runner hata verir. (Test: Task 6 `test_test_sets_need_test_once`)
 
+## Revizyon 1 — uzman incelemesi (2026-10-24, kullanıcı onaylı)
+
+Aşağıdaki maddeler, task metinleriyle çelişirse **task metninin önüne geçer**.
+
+1. **Eğitimde karışık örnek satır.**
+   - Yeni alan: `TrainConfig.train_sample_rows_mix: float = 0.0` (m1b'de 0.5). Her eğitim kaydı seed'le belirlenen bu olasılıkla `sample_rows=3` prompt'unu, aksi halde `sample_rows=0` prompt'unu alır. Validation kayıtları da aynı kuralla üretilir.
+   - Böylece `zero` ve `rows3retry` değerlendirmeleri ikisi de eğitim dağılımında olur.
+   - Test: `test_rows_mix_assigns_both_prompts` (Task 2).
+2. **Uzunluk kuralı.**
+   - `max_seq_length`, BIRD'ü ~%100 tutan en küçük değer olur: 4096 ile 6144 arası, karışık örnek satırlı kayıtlarla ölçülür.
+   - VRAM için `per_device_train_batch_size: 2`, `gradient_accumulation_steps: 8` (efektif batch 16).
+   - Atılan kayıtlar **veritabanı bazında** `train_summary.json`'a yazılır (`dropped_by_db`).
+   - Şema budama yok (eval tam şema kullanıyor).
+3. **Sızıntı kontrolü şema parmak iziyle.** Task 1'deki ayrıklık testi `db_id`'nin yanında küçük harfli tablo adı kümelerini de karşılaştırır. Bir eğitim veritabanının tablo kümesinin, herhangi bir dev/test veritabanınınkiyle Jaccard benzerliği ≥ 0,5 ise rapor edilir. Eşik aşılırsa o veritabanı eğitimden çıkarılır ve Ruling yazılır.
+4. **İstatistik.**
+   - 003 notunda her Δ için soru bazında eşleştirilmiş McNemar p değeri verilir.
+   - 5 veritabanlı CI'lar "gösterge" olarak etiketlenir.
+   - **Önceden yazılan karar kuralı:** `bird_diag`'de < 5 puanlık fark kazanç sayılmaz.
+5. **Hata analizi.** Task 5'e eklenir: m1b_mix'in `bird_diag` hatalarından seed'le 40 soru seçilir ve elle kategorilere ayrılır (şema eşleme / değer-format / join / aggregation / evidence'ı yok sayma / gold şüpheli). Ayrıca Mini-Dev zorluk seviyesine göre EX hesaplanır.
+6. **README uyarıları** (Task 7):
+   - `bird_holdout` = Mini-Dev'in 6 veritabanlık alt kümesi; yayınlanmış Mini-Dev/BIRD-dev skorlarıyla doğrudan kıyaslanamaz.
+   - Spider test EX bizim harness'ımızla ölçüldü (test-suite değil).
+   - Qwen2.5-Coder ön eğitiminde olası kirlenme (mutlak skorlar şişik olabilir; aynı base'e göre Δ geçerli).
+   - BIRD gold'larında anlamsal gürültü var.
+7. **Çıkarılanlar:** M1a koşularına MLflow tag'i ekleyen geriye dönük script (Task 3 Step 5, ikinci madde) yapılmaz. MLflow ekran görüntüsü **kalır** (kullanıcı MLflow'un GitHub'da gösterilmesini istedi).
+8. **İsteğe bağlı** (zaman kalırsa):
+   - Task 5'te 50 prompt'luk vLLM ve HF+PEFT çıktı karşılaştırması.
+   - Task 6'da `results/<run>/.test_once_done` işaret dosyası ile ikinci koşunun engellenmesi.
+   - Request uzunluğu 8192'yi aşan istek sayısının metriklerde 0 olduğunun doğrulanması.
+9. **Gece öncesi hazırlık (kullanıcı isteği):** Task 1–3 tamamlanır, ardından duman eğitimi, Spider ve BIRD veri seti incelemesi (`docs/data/dataset-review.md`) ve bağımsız kod/veri incelemesi yapılır. Geriye yalnızca Task 4 Step 1'in komutu kalır.
+
 ---
 
 ### Task 1: BIRD train indirme, yükleme, gold kontrolü
