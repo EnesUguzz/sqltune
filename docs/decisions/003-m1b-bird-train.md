@@ -102,9 +102,49 @@ training data.
 base 3B, M0 adapter, m1b_mix, 7B AWQ, 14B AWQ; each with `zero` and `rows3 + retry`. Run
 once on Spider test (2,147) and `bird_holdout` (250, 6 databases) — see below.
 
-## Test results
+## Test results (run once, 2026-10-24)
 
-(filled in after the test-once runs)
+EX %, column-order tolerant (strict in brackets). `bird_holdout`: 250 questions, 6 databases
+never used for any decision. Spider test: 2,147 questions. No transport errors in any run.
+
+| model | variant | bird_holdout | Spider test |
+|---|---|---|---|
+| base 3B | zero | 40.6 (40.6) | 71.7 (67.5) |
+| base 3B | rows3 + retry | 46.2 (46.2) | 76.6 (72.3) |
+| M0 adapter (Spider only) | zero | 36.1 (36.1) | 77.7 (74.1) |
+| M0 adapter | rows3 + retry | 39.8 (39.4) | 80.2 (75.6) |
+| **m1b_mix (3B)** | zero | **50.6** (50.6) | 78.6 (74.3) |
+| **m1b_mix (3B)** | rows3 + retry | **52.2** (52.2) | 80.9 (76.4) |
+| 7B AWQ | zero | 46.6 (46.2) | 78.7 (74.0) |
+| 7B AWQ | rows3 + retry | 51.4 (51.0) | 82.6 (77.4) |
+| 14B AWQ | zero | 54.2 (53.8) | 82.5 (77.7) |
+| 14B AWQ | rows3 + retry | 60.2 (59.8) | 85.8 (80.9) |
+
+McNemar, m1b_mix against:
+
+| set | comparison | Δ | fixed / broken | p |
+|---|---|---|---|---|
+| bird_holdout | base, zero | +10.0 | 36 / 11 | 3.5e-4 |
+| bird_holdout | base, rows3 + retry | +6.0 | 27 / 12 | 0.024 |
+| bird_holdout | M0, rows3 + retry | +12.4 | 42 / 11 | 2.2e-5 |
+| bird_holdout | 7B, rows3 + retry | +0.8 | 25 / 23 | 0.89 |
+| bird_holdout | 14B, rows3 + retry | −8.0 | 19 / 39 | 0.012 |
+| Spider test | base, zero | +6.9 | 242 / 94 | 3.5e-16 |
+| Spider test | M0, rows3 + retry | +0.7 | 93 / 77 | 0.25 |
+| Spider test | 7B, rows3 + retry | −1.7 | 130 / 167 | 0.037 |
+
+**Dev vs test.** The dev conclusions hold on the untouched sets:
+
+- BIRD train helps on BIRD: +10.0 zero-shot over base, and +6.0 with rows + retry. That is
+  smaller than on `bird_diag` (+10.4), but still above the 5-point rule and significant.
+- The Spider-only M0 adapter is again below the base on BIRD (−4.5 zero-shot), so that finding
+  was not caused by the `formula_1` overlap in `bird_diag`.
+- m1b_mix ties 7B on BIRD (+0.8, p = 0.89).
+- On Spider, m1b_mix is 1.7 points below 7B (p = 0.04) and level with M0.
+- 14B stays clearly ahead on both sets.
+
+`bird_holdout` is easier than `bird_diag` for every model (base zero 40.6 vs 33.6), so
+compare models within a set, not across sets.
 
 ## Caveats
 
@@ -116,3 +156,10 @@ once on Spider test (2,147) and `bird_holdout` (250, 6 databases) — see below.
 - Spider test EX is measured with this repo's harness (not the official test-suite).
 - Qwen2.5-Coder may have seen Spider / BIRD during pre-training; absolute scores may be
   inflated, deltas against the same base are still valid.
+
+## Next (decided 2026-10-24)
+
+- **7B fine-tune** with the same data and settings (`m1b/train/mix7b.yaml`), served as
+  merge → AWQ 4-bit so it is compared with the official 7B AWQ in the same format. Question:
+  does the BIRD-train gain on top of a 7B base close the gap to 14B?
+- Haiku (one-shot, `claude -p`) as a closed-model reference, and a Gradio demo.
