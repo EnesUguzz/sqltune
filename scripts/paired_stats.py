@@ -7,7 +7,7 @@ errors excluded) -> Δ, fixed / broken, exact McNemar p, Holm-adjusted p within 
 question-level 95% CI and database-cluster bootstrap 95% CI -> markdown rows on stdout.
 The `did` group compares two fine-tune gains (difference in differences), and `perdb`
 prints EX per database.
-Params: group names on the command line (default: all of test, dev7b, did, perdb, indist).
+Params: group names on the command line (default: all of test, dev7b, sqlite_rules, indist, did, perdb).
 Holm adjusts over the comparisons of one group only. Both CIs are rough with 5-6 databases.
 Try: `uv run python scripts/paired_stats.py test`.
 """

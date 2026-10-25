@@ -168,12 +168,13 @@ all `no such column` on a table alias (a column taken from the wrong table, e.g.
 **Dev vs test.** The dev conclusions hold on the untouched sets:
 
 - BIRD train helps on BIRD: +10.0 zero-shot over base, and +6.0 with rows + retry. That is
-  smaller than on `bird_diag` (+10.4), but still above the 5-point rule and significant.
+  smaller than on `bird_diag` (+10.4), but still above the 5-point rule; nominally significant
+  (p = 0.024), not after Holm (0.095), and its database-level CI excludes 0.
 - The Spider-only M0 adapter is again below the base on BIRD (−4.4 zero-shot), so that finding
   was not caused by the `formula_1` overlap in `bird_diag`.
-- m1b_mix ties 7B on BIRD (+0.8, p = 0.89).
-- On Spider, m1b_mix is 1.7 points below 7B (p = 0.04) and level with M0.
-- 14B stays clearly ahead on both sets.
+- m1b_mix is level with the 4-bit 7B on BIRD within noise (+0.8, p = 0.89).
+- On Spider, m1b_mix is 1.7 points below 7B (p = 0.04, 0.11 after Holm) and level with M0.
+- 14B stays ahead on both sets (BIRD holdout −8.0, p = 0.012, 0.06 after Holm).
 
 `bird_holdout` is easier than `bird_diag` for every model (base zero 40.6 vs 33.6), so
 compare models within a set, not across sets.

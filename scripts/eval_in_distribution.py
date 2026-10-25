@@ -9,6 +9,8 @@ else.
 Flow: train config (data split, seed) -> load_bird_train -> select_fraction -> split_by_db
 -> val databases, or a seeded sample of the train part -> run_eval with an existing eval
 config's model and prompt -> results/<run-name>/.
+The saved results/<run>/config.yaml is the borrowed eval config (it says bird_split diag);
+the questions actually used come from this script.
 Params: --train-config (the split, typical m1b/train/mix7b.yaml), --eval-config (model and
 prompt variant), --set (val | train), --n (train sample size, typical 250), --run-name.
 Try: `uv run python scripts/eval_in_distribution.py --eval-config

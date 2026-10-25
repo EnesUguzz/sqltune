@@ -28,25 +28,26 @@ BIRD holdout = 250 Mini-Dev questions on 6 databases never used for any decision
 one gold query runs longer than the 120 s gold timeout and is left out for every model).
 
 - **BIRD train is what helps on BIRD.** m1b_mix vs base on BIRD holdout: +10.0 zero-shot
-  (McNemar p = 3e-4, 95% CI +4.8 to +15.3) and +6.0 against the stronger rows + retry prompt
+  (McNemar p = 3.5e-4, 95% CI +4.8 to +15.3) and +6.0 against the stronger rows + retry prompt
   (p = 0.024; 0.095 after Holm correction over the 8 test comparisons). The Spider-only
   adapter is *below* the base on BIRD.
 - **3B fine-tune vs 7B: not distinguishable, not "equal".** Against the 4-bit 7B on BIRD
   holdout: +0.8 (p = 0.89, 95% CI −4.7 to +6.3). The average hides per-database swings
   (`financial` 6% vs 38%, `codebase_community` 58% vs 42%). Against a near-lossless FP8 7B
-  on dev, the 3B is 4.4 points behind on both BIRD and Spider. 14B is clearly ahead.
+  on dev, the 3B is 4.4 points behind on BIRD (p = 0.18) and on Spider (p = 5e-4). 14B is
+  ahead (−8.0 on BIRD holdout, p = 0.012; 0.06 after Holm).
 - **Spider is not hurt** by adding BIRD (80.9 vs 80.2 for the Spider-only adapter, p = 0.25;
   within seed noise either way).
 - **The same recipe does not lift the 7B** (dev sets, [004](docs/decisions/004-m1b-7b-finetune.md)).
   No detectable BIRD gain against its own base: +0.4 with AWQ 4-bit and 0.0 with FP8 (95% CI
   about ±5.5). The 3B gain minus the 7B gain on the same questions is **+10.4
-  (95% CI +3.3 to +17.5)**, so the difference between the sizes is real. The 7B did learn:
+  (95% CI +3.3 to +17.5)**: the 3B gain is significantly larger (question-level CI, one dev set). The 7B did learn:
   its validation loss drops 45% (3B: 39%), and it gains +7 EX on questions it trained on, but
   only +2 on unseen databases of the same distribution and 0 on Mini-Dev. The 3B gains
   +11 to +16 on all of them.
 - **A prompt does not replace the 3B fine-tune.** A system prompt with SQLite rules (quoting,
-  table prefixes, `strftime`, `CAST`) makes the base 3B slightly worse (−0.8 BIRD dev, −3.8
-  Spider dev); the fine-tune stays +13 above it on BIRD dev.
+  table prefixes, `strftime`, `CAST`) is no better for the base 3B on BIRD dev (−0.8, n.s.)
+  and worse on Spider dev (−3.8, p = 3e-4); the fine-tune stays +13 above it on BIRD dev.
 
 How it got there, one decision note per milestone:
 [001](docs/decisions/001-m0-first-delta.md) first fine-tune on Spider ·
@@ -60,7 +61,7 @@ database-level CIs, the difference in differences, per-database EX) is recompute
 
 **Test sets were run once.** `bird_holdout` and Spider test only run with `run.test_once: true`,
 which only the final configs set (the guard is in `runner.py`). MLflow holds exactly one run per
-test-set config, all from one commit. The 5-point rule ("a dev difference under 5 EX points is
+test-set config, and all 20 result folders were committed together (4af5c0d). The 5-point rule ("a dev difference under 5 EX points is
 not a gain") was committed in the plan before the M1b training run.
 
 ### Caveats
@@ -96,7 +97,8 @@ is not in the repo, the run folders under `results/` are). Run `uv run mlflow ui
 - **Eval runs:** the full config, EX (strict and tolerant) with a database-level bootstrap CI,
   outcome counts by error type, latency and token counts, and the predictions file. Each eval
   run is tagged with the training run it evaluates (`train_run`, `train_mlflow_run_id`), the
-  prompt variant and the eval set, so any number can be traced back to its adapter.
+  prompt variant and the eval set, so numbers can be traced back to their adapter (exceptions:
+  M0 runs predate the `mlflow_run_id` field, and FP8 check runs carry no `train_run` tag).
 
 ![Training loss](docs/img/m1b_loss.png)
 

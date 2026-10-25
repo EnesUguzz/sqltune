@@ -34,7 +34,7 @@ serve:  ## vLLM on :8000; `make serve LORA=m0_qlora` also serves adapters/m0_qlo
 serve-down:
 	docker compose down
 
-download:  ## Spider questions + SQLite DBs -> data/spider/
+download:  ## Spider, BIRD Mini-Dev and BIRD train (questions + SQLite DBs) -> data/
 	uv run sqltune download
 
 eval:  ## score a model on Spider: make eval CONFIG=experiments/configs/m0/baseline.yaml
@@ -69,7 +69,7 @@ serve-multi:  ## base model + every adapter in ADAPTERS, each served under its o
 
 GROUP ?= base3b
 
-m1-eval:  ## run every M1a eval config of GROUP against the running server; failures logged, not fatal
+m1-eval:  ## run every eval config of GROUP against the running server; failures logged, not fatal
 	@mkdir -p outputs
 	@for f in experiments/configs/m1/eval/$(GROUP)--*.yaml; do \
 	  echo "=== $$f $$(date +%H:%M)"; \

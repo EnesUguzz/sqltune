@@ -12,7 +12,7 @@ on top of Qwen2.5-Coder-7B-Instruct close the gap to 14B?
 
 - **Training:** `m1b/train/mix7b.yaml`. Same data, split, LoRA settings and 1 epoch as
   `m1b_mix`; only the base model changes. 932 steps, 3 h 4 min, peak 8.6 GiB VRAM, final
-  validation loss 0.113 (3B: 0.200).
+  validation loss 0.113 (3B: 0.201).
 - **Serving.** The 7B does not fit the 16 GB card in bf16 under vLLM, so the LoRA is merged
   into the bf16 base and the result is quantized. vLLM v0.31 no longer serves bitsandbytes,
   so the NF4 training base cannot be used directly. Two paths:
@@ -74,7 +74,7 @@ The dev null could mean "the 7B learned nothing" or "it learned, but the gain do
 over to Mini-Dev". Three checks, none on test sets:
 
 **Validation loss** (`scripts/val_loss.py`, completion tokens of the 838 held-out validation
-records, 9 databases never trained on; token-weighted):
+records, 10 databases never trained on (7 Spider, 3 BIRD); token-weighted):
 
 | | base | fine-tuned | drop |
 |---|---|---|---|
@@ -97,7 +97,7 @@ For the 3B the gain is about the same everywhere: on questions it trained on, on
 databases of the same distribution and on Mini-Dev. For the 7B it shrinks step by step:
 +7 on its own training questions, +2 on unseen databases of the same distribution, 0 on
 Mini-Dev. Even on questions it was trained on, the 7B gains only 7 points, while its loss
-drops 45%. So most of what the 7B learned is how the gold SQL is written (aliases, layout,
+drops 45%. This is consistent with (not proof of) the 7B mostly learning how the gold SQL is written (aliases, layout,
 which of several equivalent forms), which lowers loss but rarely changes the result.
 
 **Can a prompt replace the 3B fine-tune?** The independent review noted that half of the
@@ -141,12 +141,12 @@ errors, so if anything this check is biased in the prompt's favour.
 
 ## Decision
 
-- No 7B test-set run is needed to support a claim. The dev result is a clear null on BIRD.
+- No 7B test-set run is needed to support a claim. The dev result shows no detectable gain on BIRD.
   It stays a dev finding unless the test set is run (only with the user's approval).
 - Headline model stays the 3B `m1b_mix`. The project result is "a 3B QLoRA lands within
   noise of the 4-bit 7B base, and a prompt cannot do the same", and "the same recipe does not
   lift the 7B" is the honest second half. For a 7B, this data is worth little; for a 3B it is
-  the difference between below-7B and 7B-level BIRD accuracy at less than half the size.
+  the difference between below-7B and 4-bit-7B-level BIRD accuracy at less than half the size.
 - Options to lift the 7B, none started: more epochs or a higher LoRA rank; harder or
   cleaner BIRD data; schema pruning / linking at inference time (the largest error class in
   003); or RL on execution feedback (GRPO, planned as optional M2).
