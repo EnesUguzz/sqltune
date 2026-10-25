@@ -1,0 +1,1521 @@
+{
+ "summary": {
+  "n": 250,
+  "k": 8,
+  "temperature": 0.7,
+  "transport_errors": 0,
+  "greedy_ex": 46.0,
+  "sampled_ex": 33.95,
+  "pass_at_k": 61.2,
+  "vote_ex": 47.2,
+  "vote_vs_greedy": {
+   "fixed": 19,
+   "broken": 16,
+   "p": 0.7358788008568808
+  },
+  "never_correct": 97,
+  "always_correct": 21
+ },
+ "questions": [
+  {
+   "id": "bird-0078",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0079",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0080",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0081",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0082",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0083",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0084",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0085",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0086",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0087",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0088",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0089",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0090",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0091",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0092",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0093",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0094",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0095",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0096",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0097",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0098",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0099",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0100",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0101",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0102",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0103",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0104",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0105",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0106",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0107",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0108",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0109",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0110",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0111",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0112",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0113",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0114",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0115",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0116",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0117",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0118",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0119",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0120",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0121",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0122",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0123",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0124",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0125",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0126",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0127",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0179",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0180",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0181",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0182",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0183",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0184",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0185",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0186",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0187",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0188",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0189",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0190",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0191",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0192",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0193",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0194",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0195",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0196",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0197",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0198",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0199",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0200",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0201",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0202",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0203",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0204",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0205",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0206",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0207",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0208",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0209",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0210",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0211",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0212",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0213",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0214",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0215",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0216",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0217",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0218",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0219",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0220",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0221",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0222",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0223",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0224",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0225",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0226",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0227",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0228",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0229",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0230",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0231",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0232",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0233",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0234",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0235",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0236",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0237",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0238",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0239",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0240",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0241",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0242",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0243",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0244",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0245",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0246",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0247",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0248",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0249",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0250",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0251",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0252",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0253",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0254",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0255",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0256",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0257",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0258",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0259",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0260",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0261",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0262",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0263",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0264",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0265",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0266",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0267",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0268",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0269",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0270",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0271",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0272",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0273",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0274",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0275",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0276",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0277",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0278",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0279",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0280",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0281",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0282",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0283",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0284",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0285",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0286",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0287",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0288",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0289",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0290",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0291",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0292",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0293",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0294",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0295",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0296",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0346",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0347",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0348",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0349",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0350",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0351",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0352",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0353",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0354",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0355",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0356",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0357",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0358",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0359",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0360",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0361",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0362",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0363",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0364",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0365",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0366",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0367",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0368",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0369",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0370",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0371",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0372",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0373",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0374",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0375",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0376",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0377",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0378",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0379",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0380",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0381",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0382",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0383",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0384",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0385",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0386",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0387",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0388",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0389",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0390",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0391",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0392",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0393",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0394",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0395",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0396",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0397",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0438",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0439",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0440",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0441",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0442",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0443",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0444",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0445",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0446",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0447",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0448",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0449",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0450",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0451",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0452",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "bird-0453",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0454",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0455",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0456",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "bird-0457",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0458",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0459",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "bird-0460",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0461",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0462",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0463",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0464",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0465",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0466",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "bird-0467",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  }
+ ]
+}

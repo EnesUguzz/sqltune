@@ -1,0 +1,2853 @@
+{
+ "summary": {
+  "n": 472,
+  "k": 8,
+  "temperature": 0.7,
+  "transport_errors": 0,
+  "greedy_ex": 46.82203389830509,
+  "sampled_ex": 38.61228813559322,
+  "pass_at_k": 62.28813559322034,
+  "vote_ex": 50.21186440677966,
+  "vote_vs_greedy": {
+   "fixed": 38,
+   "broken": 22,
+   "p": 0.051893895928921435
+  },
+  "never_correct": 178,
+  "always_correct": 68
+ },
+ "questions": [
+  {
+   "id": "birdtrain-02575",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02576",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02577",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02578",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02579",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02580",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02581",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02582",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02583",
+   "n_correct": 4,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02584",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02585",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02586",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02587",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02588",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02589",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02590",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02591",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02592",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02593",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02594",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02595",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02596",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02597",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02598",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02599",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02600",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02601",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02602",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02603",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02604",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02605",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02606",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02607",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02608",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02609",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02610",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02611",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02612",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02613",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02614",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02615",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02616",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02617",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02618",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02619",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02620",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02621",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02622",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02623",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02624",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02625",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02626",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02627",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02628",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02629",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02630",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02631",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02632",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02633",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02634",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02635",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02636",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02637",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02638",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02639",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02640",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02641",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02642",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02643",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02644",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02645",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02646",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02647",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02648",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02649",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02650",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02651",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02652",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02653",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02654",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02655",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02656",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02657",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02658",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02659",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02660",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02661",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02662",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02663",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02664",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02665",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02666",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02667",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02668",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02669",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02670",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02671",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02672",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02673",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02674",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02675",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02676",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02677",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02678",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02679",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02680",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02681",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02682",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02683",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02684",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02685",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02686",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02687",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02688",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02689",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02690",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02691",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02692",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02693",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02694",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02695",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02696",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02697",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02698",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02699",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02700",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02701",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02702",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02703",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02704",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02705",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02706",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02707",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02708",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02709",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02710",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02711",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02712",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02713",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02714",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02715",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02716",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02717",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02718",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02719",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02720",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02721",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02722",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02723",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02724",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02725",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02726",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02727",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02728",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02729",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02730",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02731",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02732",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02733",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-02734",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02735",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02736",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02737",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-02738",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05363",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05364",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05365",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05366",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05367",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05368",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05369",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05370",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05371",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05372",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05373",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05374",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05375",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05376",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05377",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05378",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05379",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05380",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05382",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05383",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05384",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05385",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05386",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05387",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05388",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05389",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05390",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05391",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05392",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05393",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05394",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05395",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05396",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05397",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05398",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05399",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05400",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05401",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05402",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05403",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05404",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05405",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05406",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05407",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05408",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05409",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05410",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05411",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05412",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05413",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05414",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05415",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05416",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05417",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05419",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05421",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05423",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05424",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05425",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05426",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05427",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05428",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05429",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05430",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05431",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05432",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05433",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05434",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05435",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05436",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05437",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05438",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05439",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05440",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05442",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05443",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05444",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05445",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05446",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05447",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05448",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05449",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05450",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05451",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05452",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05453",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05454",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05455",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05456",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05457",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05458",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05459",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05460",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05461",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05462",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05463",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05464",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05465",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05466",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05467",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-05468",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-05469",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07612",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07613",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07614",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07615",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07616",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07617",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07618",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07619",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07620",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07621",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07622",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07623",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07624",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07625",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07626",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07627",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07628",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07629",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07630",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07631",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07632",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07633",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07634",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07635",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07636",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07637",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07639",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07640",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07641",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07642",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07643",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07644",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07645",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07646",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07647",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07648",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07649",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07650",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07651",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07652",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07653",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07654",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07655",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07656",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07657",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07658",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07659",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07660",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07661",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07662",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07663",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07664",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07665",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07666",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07667",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07668",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07669",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07670",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07671",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07672",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07673",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07674",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07675",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07676",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07677",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07678",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07679",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07680",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07681",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07682",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07683",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07684",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07685",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07686",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07687",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07688",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07689",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07690",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07691",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07692",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07693",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07694",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07695",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07696",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07697",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07698",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07699",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07700",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07701",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07702",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07703",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07704",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07705",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07706",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07707",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07708",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07709",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07710",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07711",
+   "n_correct": 6,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07712",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07713",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07714",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07715",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07716",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07717",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07718",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07719",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07720",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07721",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07722",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07723",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07724",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07725",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07726",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07727",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07728",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07729",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07730",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07731",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07732",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07733",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07734",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07735",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07736",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07737",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07738",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07739",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07740",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07741",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07742",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07743",
+   "n_correct": 7,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07744",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07745",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07746",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07747",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07748",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07749",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07750",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07751",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07752",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07753",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07754",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07755",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07756",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07757",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07758",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07759",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07760",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07761",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07762",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07763",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07764",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07765",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07766",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07767",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07768",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07769",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07770",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07771",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07772",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07773",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07774",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07775",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07776",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07777",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07778",
+   "n_correct": 2,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07779",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07780",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07781",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07782",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07783",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07784",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07785",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07786",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07787",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07788",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07789",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07790",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07791",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07792",
+   "n_correct": 5,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07793",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07794",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07795",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07796",
+   "n_correct": 3,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07797",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07798",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07799",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07800",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07801",
+   "n_correct": 4,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07802",
+   "n_correct": 2,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07803",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07804",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07805",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07806",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07807",
+   "n_correct": 8,
+   "vote": true,
+   "greedy": true
+  },
+  {
+   "id": "birdtrain-07808",
+   "n_correct": 1,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07809",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07810",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07811",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07812",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07813",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07814",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07815",
+   "n_correct": 3,
+   "vote": true,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07816",
+   "n_correct": 1,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07817",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  },
+  {
+   "id": "birdtrain-07818",
+   "n_correct": 0,
+   "vote": false,
+   "greedy": false
+  }
+ ]
+}
