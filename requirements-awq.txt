@@ -1,0 +1,9 @@
+# Separate environment for scripts/merge_awq.py (llm-compressor pins its own torch / transformers).
+# uv venv ~/venvs/awq && VIRTUAL_ENV=~/venvs/awq uv pip install -r requirements-awq.txt
+llmcompressor==0.14.0.1
+compressed-tensors==0.19.0
+peft==0.21.2
+torch==2.14.0
+transformers==5.17.0
+datasets==5.1.0
+accelerate==1.15.0

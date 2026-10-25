@@ -1,0 +1,18 @@
+# base 3B with the SQLite-rules system prompt (audit check: can a prompt replace the fine-tune?); from m1b--base__rows3retry__birddiag.yaml
+# model base | prompt variant rows3retry | eval set birddiag
+extends: ../../base.yaml
+run:
+  experiment_name: m1a
+  run_name: m1_base_sqliterules__rows3retry__birddiag
+inference:
+  model: base
+  retry_on_error: true
+data:
+  dataset: bird
+  bird_split: diag
+evaluation:
+  row_compare: set
+  exec_timeout_s: 30.0
+prompt:
+  system_template: prompts/sql_system_sqlite_rules.md
+  sample_rows: 3

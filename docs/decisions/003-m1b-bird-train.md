@@ -18,8 +18,9 @@ settings and 1 epoch:
   prompts fell back to the plain prompt.
 - 93 min, 932 steps, peak 3.9 GiB VRAM, MLflow run `a33af0f0`.
 
-**Validation loss:** 0.209 (step 200) → 0.210 → 0.205 → 0.200 → 0.201 (step 932). It is
-nearly flat after the first fifth of the epoch: the format is learned early and later steps
+**Validation loss:** 0.209 (step 200) → 0.210 → 0.205 → 0.200 → 0.201 (step 932). The base
+model, measured the same way afterwards (`scripts/val_loss.py`, token-weighted), scores 0.333
+and the final adapter 0.204. So most of the drop happens before step 200, and later steps
 gain little on unseen databases. This is a weak signal that more data of the *same* kind
 would add only a few points; it does not say anything about different data (harder SQL,
 other schemas). The BIRD validation part has only 3 databases, so it is noisy.
@@ -56,14 +57,17 @@ bootstrap CIs on `bird_diag` are indicative only.
    `bird_diag`, both well above the 5-point rule and significant. The Spider-only adapter
    was at or below the base here (M1a), so the gain comes from BIRD-style data (evidence
    hints, CASE/CAST/date SQL, wide schemas), not from fine-tuning as such.
-2. **The 3B adapter reaches the 7B AWQ (4-bit) model on BIRD**, with a caveat on dev: the
+2. **The 3B adapter is not distinguishable from the 7B AWQ (4-bit) model on BIRD**
+   (not distinguishable is not the same as equal; see the CIs below), with a caveat on dev: the
    7B dev run used retry without example rows. Here m1b_mix with rows3 + retry scores 48.8 and
    7B with retry scores 48.4 (McNemar p = 1.0, 30 questions each way). The same-variant
    comparison is on the test set: 52.2 vs 51.4 (p = 0.89). The 3B is served in bf16, the 7B
    and 14B as AWQ 4-bit. 14B is still 9 points ahead. *Added 2026-10-25:* the same-variant
    dev run of the 7B (rows3 + retry) scores 51.6, 2.8 above m1b_mix (p = 0.44). So "level
-   within noise" holds on both sets, and "better" holds on neither (see 004).
-3. **Spider is not hurt.** m1b_mix vs the Spider-only M0 adapter: −0.6 (zero) and −1.7
+   within noise" holds on both sets, and "better" holds on neither (see 004). Against the
+   near-lossless FP8 7B (004), m1b_mix is 4.4 points behind on `bird_diag` (p = 0.18) and on
+   Spider dev (p = 5e-4).
+3. **Spider is not hurt.** m1b_mix vs the Spider-only M0 adapter: −0.6 (zero) and −1.6
    (rows3 + retry), neither significant. One adapter now covers both benchmarks.
 4. **Schema errors drop most.** Share of `no such column` among `bird_diag` predictions:
    base 30% → m1b_mix 13.6%.
@@ -125,18 +129,41 @@ never used for any decision. Spider test: 2,147 questions. No transport errors i
 | 14B AWQ | zero | 54.2 (53.8) | 82.5 (77.7) |
 | 14B AWQ | rows3 + retry | 60.2 (59.8) | 85.8 (80.9) |
 
-McNemar, m1b_mix against:
+McNemar, m1b_mix against (`scripts/paired_stats.py test`; Holm adjusts over these 8 rows;
+`bird_holdout` has 249 scored questions):
 
-| set | comparison | Δ | fixed / broken | p |
-|---|---|---|---|---|
-| bird_holdout | base, zero | +10.0 | 36 / 11 | 3.5e-4 |
-| bird_holdout | base, rows3 + retry | +6.0 | 27 / 12 | 0.024 |
-| bird_holdout | M0, rows3 + retry | +12.4 | 42 / 11 | 2.2e-5 |
-| bird_holdout | 7B, rows3 + retry | +0.8 | 25 / 23 | 0.89 |
-| bird_holdout | 14B, rows3 + retry | −8.0 | 19 / 39 | 0.012 |
-| Spider test | base, zero | +6.9 | 242 / 94 | 3.5e-16 |
-| Spider test | M0, rows3 + retry | +0.7 | 93 / 77 | 0.25 |
-| Spider test | 7B, rows3 + retry | −1.7 | 130 / 167 | 0.037 |
+| set | comparison | Δ | fixed / broken | p | p Holm | 95% CI (questions) | 95% CI (databases) |
+|---|---|---|---|---|---|---|---|
+| bird_holdout | base, zero | +10.0 | 36 / 11 | 3.5e-4 | 0.002 | +4.8 to +15.3 | +2.0 to +15.4 |
+| bird_holdout | base, rows3 + retry | +6.0 | 27 / 12 | 0.024 | 0.095 | +1.2 to +10.9 | +1.7 to +8.7 |
+| bird_holdout | M0, rows3 + retry | +12.4 | 42 / 11 | 2.2e-5 | 1.6e-4 | +6.9 to +18.0 | +5.9 to +18.3 |
+| bird_holdout | 7B, rows3 + retry | +0.8 | 25 / 23 | 0.89 | 0.89 | −4.7 to +6.3 | −12.4 to +9.4 |
+| bird_holdout | 14B, rows3 + retry | −8.0 | 19 / 39 | 0.012 | 0.06 | −14.0 to −2.1 | −21.6 to +2.9 |
+| Spider test | base, zero | +6.9 | 242 / 94 | 3.5e-16 | 2.8e-15 | +5.2 to +8.5 | +5.2 to +8.8 |
+| Spider test | M0, rows3 + retry | +0.7 | 93 / 77 | 0.25 | 0.5 | −0.4 to +1.9 | −0.9 to +2.5 |
+| Spider test | 7B, rows3 + retry | −1.7 | 130 / 167 | 0.037 | 0.11 | −3.3 to −0.2 | −4.6 to +0.9 |
+
+After Holm correction, three rows are no longer significant at 0.05: +6.0 over base with
+rows3 + retry, −8.0 vs 14B, and −1.7 vs 7B on Spider. The +6.0 is still above the 5-point
+rule, and its database-level CI excludes 0.
+
+EX per `bird_holdout` database (rows3 + retry, `scripts/paired_stats.py perdb`):
+
+| database | n | base 3B | m1b_mix | 7B AWQ | 14B AWQ |
+|---|---|---|---|---|---|
+| codebase_community | 48 | 50.0 | 58.3 | 41.7 | 45.8 |
+| debit_card_specializing | 30 | 40.0 | 46.7 | 53.3 | 56.7 |
+| european_football_2 | 51 | 60.8 | 66.7 | 62.7 | 70.6 |
+| financial | 32 | 12.5 | 6.2 | 37.5 | 46.9 |
+| student_club | 48 | 66.7 | 75.0 | 72.9 | 81.2 |
+| toxicology | 40 | 30.0 | 40.0 | 32.5 | 52.5 |
+
+The "3B ≈ 7B" average hides large per-database differences. `financial` (Czech bank data)
+is the outlier: its columns are opaque codes (`A3` = region, `A11` = average salary, known
+only from the evidence hint), values are stored lower-case (`'east Bohemia'`), and several
+gold queries answer a slightly different question. m1b_mix makes 10 execution errors there,
+all `no such column` on a table alias (a column taken from the wrong table, e.g. joining
+`account_id` to `client_id`); the 7B makes 2. m1b_mix is ahead of the 7B on 3 of 6 databases.
 
 **Dev vs test.** The dev conclusions hold on the untouched sets:
 

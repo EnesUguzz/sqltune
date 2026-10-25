@@ -1,4 +1,4 @@
-"""One-off: EX by BIRD difficulty for the M1b dev rows, and 40 seeded m1b_mix failures to label."""
+"""EX by BIRD difficulty for the M1b dev rows, and the 40 seeded m1b_mix failures labelled in 003."""
 
 import json
 import random
@@ -34,11 +34,18 @@ for run in RUNS:
         if r["outcome"] == "gold_error":
             continue
         by.setdefault(r["difficulty"], []).append(r["col_tolerant_correct"])
-    cells = [f"{100 * sum(v) / len(v):.1f} (n={len(v)})" for v in (by.get(d, [0]) for d in ("simple", "moderate", "challenging"))]
+    cells = [
+        f"{100 * sum(v) / len(v):.1f} (n={len(v)})"
+        for v in (by.get(d, [0]) for d in ("simple", "moderate", "challenging"))
+    ]
     print(f"| {run} | " + " | ".join(cells) + " |")
 
 evidence = {e.id: e.evidence for e in load_bird(DataConfig(bird_split="diag"))}
-fails = [r for r in rows("m1_m1b_mix__rows3retry__birddiag") if not r["col_tolerant_correct"] and r["outcome"] != "gold_error"]
+fails = [
+    r
+    for r in rows("m1_m1b_mix__rows3retry__birddiag")
+    if not r["col_tolerant_correct"] and r["outcome"] != "gold_error"
+]
 print("\nfailures:", len(fails), Counter(r["outcome"] for r in fails))
 pick = random.Random(0).sample(fails, 40)
 for i, r in enumerate(sorted(pick, key=lambda r: r["id"])):

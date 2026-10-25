@@ -4,8 +4,9 @@ Fine-tuning Qwen2.5-Coder-3B-Instruct for text-to-SQL (SQLite) with QLoRA, serve
 measured by execution accuracy on Spider and BIRD Mini-Dev.
 
 **Result.** A 3B model fine-tuned with QLoRA on Spider + BIRD train (15k examples, 93 min on
-one 16 GB GPU, 3.9 GiB peak VRAM) **matches the 7B model of the same family (AWQ 4-bit) on BIRD** and gains
-+10 EX over its own base. Numbers are on held-out test sets, each run exactly once:
+one 16 GB GPU, 3.9 GiB peak VRAM) gains **+6 to +10 EX on BIRD** over its own base and lands
+**within noise of the 4-bit 7B model** of the same family. The same recipe gives the 7B no
+detectable gain. Numbers are on held-out test sets, each run exactly once:
 
 | model | variant | BIRD holdout EX | Spider test EX | train time / VRAM |
 |---|---|---|---|---|
@@ -23,16 +24,29 @@ one 16 GB GPU, 3.9 GiB peak VRAM) **matches the 7B model of the same family (AWQ
 EX = execution accuracy, column-order tolerant (strict numbers and every other run:
 [results/SUMMARY.md](results/SUMMARY.md)). *rows + retry*: the prompt shows 3 example rows per
 table, and a query that fails to execute is retried once with the error message.
-BIRD holdout = 250 Mini-Dev questions on 6 databases never used for any decision.
+BIRD holdout = 250 Mini-Dev questions on 6 databases never used for any decision (249 scored:
+one gold query runs longer than the 120 s gold timeout and is left out for every model).
 
-- **BIRD train is what helps on BIRD.** m1b_mix vs base: +10.0 (zero-shot, McNemar p = 3e-4)
-  and +6.0 (rows + retry, p = 0.02). The Spider-only adapter is *below* the base on BIRD.
-- **3B fine-tune ≈ 7B AWQ base on BIRD** (52.2 vs 51.4, p = 0.89), 1.7 points behind it on Spider.
-  14B is still clearly ahead.
-- **Spider is not hurt** by adding BIRD (80.9 vs 80.2 for the Spider-only adapter, p = 0.25).
-- **The same recipe does not lift the 7B** (dev sets): 0.0 EX on BIRD against its own base, in
-  both AWQ 4-bit and FP8. Only Spider zero-shot improves (+3.9, p = 6e-4). The gain is a
-  small-model effect, not a free win at every size.
+- **BIRD train is what helps on BIRD.** m1b_mix vs base on BIRD holdout: +10.0 zero-shot
+  (McNemar p = 3e-4, 95% CI +4.8 to +15.3) and +6.0 against the stronger rows + retry prompt
+  (p = 0.024; 0.095 after Holm correction over the 8 test comparisons). The Spider-only
+  adapter is *below* the base on BIRD.
+- **3B fine-tune vs 7B: not distinguishable, not "equal".** Against the 4-bit 7B on BIRD
+  holdout: +0.8 (p = 0.89, 95% CI −4.7 to +6.3). The average hides per-database swings
+  (`financial` 6% vs 38%, `codebase_community` 58% vs 42%). Against a near-lossless FP8 7B
+  on dev, the 3B is 4.4 points behind on both BIRD and Spider. 14B is clearly ahead.
+- **Spider is not hurt** by adding BIRD (80.9 vs 80.2 for the Spider-only adapter, p = 0.25;
+  within seed noise either way).
+- **The same recipe does not lift the 7B** (dev sets, [004](docs/decisions/004-m1b-7b-finetune.md)).
+  No detectable BIRD gain against its own base: +0.4 with AWQ 4-bit and 0.0 with FP8 (95% CI
+  about ±5.5). The 3B gain minus the 7B gain on the same questions is **+10.4
+  (95% CI +3.3 to +17.5)**, so the difference between the sizes is real. The 7B did learn:
+  its validation loss drops 45% (3B: 39%), and it gains +7 EX on questions it trained on, but
+  only +2 on unseen databases of the same distribution and 0 on Mini-Dev. The 3B gains
+  +11 to +16 on all of them.
+- **A prompt does not replace the 3B fine-tune.** A system prompt with SQLite rules (quoting,
+  table prefixes, `strftime`, `CAST`) makes the base 3B slightly worse (−0.8 BIRD dev, −3.8
+  Spider dev); the fine-tune stays +13 above it on BIRD dev.
 
 How it got there, one decision note per milestone:
 [001](docs/decisions/001-m0-first-delta.md) first fine-tune on Spider ·
@@ -40,8 +54,24 @@ How it got there, one decision note per milestone:
 [003](docs/decisions/003-m1b-bird-train.md) adding BIRD train, error analysis, test runs ·
 [004](docs/decisions/004-m1b-7b-finetune.md) the same fine-tune on 7B (merge → AWQ / FP8).
 
+Every comparison in the decision notes (Δ, McNemar p, Holm-adjusted p, question-level and
+database-level CIs, the difference in differences, per-database EX) is recomputed by
+`uv run python scripts/paired_stats.py` from the prediction files in `results/`.
+
+**Test sets were run once.** `bird_holdout` and Spider test only run with `run.test_once: true`,
+which only the final configs set (the guard is in `runner.py`). MLflow holds exactly one run per
+test-set config, all from one commit. The 5-point rule ("a dev difference under 5 EX points is
+not a gain") was committed in the plan before the M1b training run.
+
 ### Caveats
 
+- **Small evaluation sets.** Each BIRD half has 250 questions on 5-6 databases, so a 95% CI on
+  a paired difference is about ±5 points. Database-level bootstrap CIs are wider and rough
+  with so few databases. The full BIRD dev set (1,534 questions on the same 11 databases)
+  would give about 3× the power; Mini-Dev (BIRD's curated 500-question subset) was chosen to
+  keep each eval run short.
+- **One seed per model.** Spider-only adapters varied by ~1.7 Spider-dev points across seeds
+  (002), so Spider differences of that size are noise. The BIRD gains are well above it.
 - BIRD holdout is a 6-database subset of Mini-Dev; numbers are not directly comparable with
   published Mini-Dev or BIRD-dev leaderboards.
 - Spider test EX comes from this repo's harness, not the official test-suite evaluation.
@@ -70,8 +100,10 @@ is not in the repo, the run folders under `results/` are). Run `uv run mlflow ui
 
 ![Training loss](docs/img/m1b_loss.png)
 
-Validation loss on unseen databases flattens after ~1/5 of the epoch (0.209 → 0.201): the
-format is learned early. M0's train loss falls lower because it ran 2 epochs on Spider only.
+Validation loss on unseen databases (completion tokens only) is 0.333 for the base 3B and
+0.204 after fine-tuning (`scripts/val_loss.py`). During training it is already 0.209 at the
+first check (step 200 of 932) and barely moves after that, so most of the gain comes in the
+first fifth of the epoch. M0's train loss falls lower because it ran 2 epochs on Spider only.
 
 ![Learning curve](docs/img/m1_learning_curve.png)
 
@@ -83,8 +115,27 @@ data did (m1b_mix: 46.0 on bird_diag vs 33.6 for base).
 MLflow's compare view for M0, the 1-epoch Spider run and m1b_mix: parameters that differ
 and final metrics.
 
-Prompt-token parity between training and vLLM: `uv run --extra train python
-scripts/check_tokenize.py` (with `make serve LORA=m0_qlora` running) → 22/22 identical.
+Training and evaluation build their prompts with the same function (`build_messages`). The
+token-level check below was run for M0 only, on 11 Spider dev prompts (zero-shot, no evidence,
+no example rows): `uv run --extra train python scripts/check_tokenize.py` (with
+`make serve LORA=m0_qlora` running) → 22/22 identical.
+
+## Reproduce
+
+```bash
+uv sync --extra train && make check-env
+make download                  # Spider, BIRD Mini-Dev, BIRD train (~12 GB)
+make dataset-review            # gold health + data/bird_train/gold_failures.json (needed by train)
+make train CONFIG=experiments/configs/m1b/train/mix.yaml          # 3B, ~1.5 h
+make serve-multi ADAPTERS="m0_qlora m1b_mix"                       # base + adapters on :8000
+make m1-eval GROUP=m1b                                             # dev rows; see gen_m1_eval_configs.py
+uv run sqltune summarize && uv run python scripts/paired_stats.py
+```
+
+7B: train with `m1b/train/mix7b.yaml`, then merge and quantize in a separate environment
+(`requirements-awq.txt`): `scripts/merge_awq.py` (AWQ 4-bit, or `--no-quantize` for bf16
+served as FP8). `scripts/oneoff/` holds the exact overnight drivers that produced the 003 / 004
+runs. Adapters and quantized models are not in the repo (sizes); everything else is.
 
 ## Environment
 
