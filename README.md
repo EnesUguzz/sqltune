@@ -30,11 +30,15 @@ BIRD holdout = 250 Mini-Dev questions on 6 databases never used for any decision
 - **3B fine-tune ≈ 7B AWQ base on BIRD** (52.2 vs 51.4, p = 0.89), 1.7 points behind it on Spider.
   14B is still clearly ahead.
 - **Spider is not hurt** by adding BIRD (80.9 vs 80.2 for the Spider-only adapter, p = 0.25).
+- **The same recipe does not lift the 7B** (dev sets): 0.0 EX on BIRD against its own base, in
+  both AWQ 4-bit and FP8. Only Spider zero-shot improves (+3.9, p = 6e-4). The gain is a
+  small-model effect, not a free win at every size.
 
 How it got there, one decision note per milestone:
 [001](docs/decisions/001-m0-first-delta.md) first fine-tune on Spider ·
 [002](docs/decisions/002-m1a-bird-baselines-sweeps.md) BIRD baselines and training sweeps ·
-[003](docs/decisions/003-m1b-bird-train.md) adding BIRD train, error analysis, test runs.
+[003](docs/decisions/003-m1b-bird-train.md) adding BIRD train, error analysis, test runs ·
+[004](docs/decisions/004-m1b-7b-finetune.md) the same fine-tune on 7B (merge → AWQ / FP8).
 
 ### Caveats
 

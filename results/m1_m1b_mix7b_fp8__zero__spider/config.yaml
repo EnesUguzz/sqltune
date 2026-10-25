@@ -1,0 +1,88 @@
+data:
+  data_dir: data
+  split: dev
+  subset: full
+  dev_small_size: 300
+  seed: 13
+  dataset: spider
+  train_sources:
+  - spider
+  spider_train_exclude_dbs: []
+  bird_train_exclude_dbs:
+  - world
+  - airline
+  bird_train_skip_failing_gold: true
+  bird_diag_dbs:
+  - california_schools
+  - card_games
+  - formula_1
+  - superhero
+  - thrombosis_prediction
+  bird_split: diag
+  spider_drive_id: 1403EGqzIDoHMdQF4c9Bkyl7dZLZ5Wt6J
+  include_train_others: false
+prompt:
+  system_template: prompts/sql_system.md
+  single_template: prompts/sql_single.md
+  evidence_template: prompts/sql_single_evidence.md
+  retry_template: prompts/sql_retry.md
+  sample_rows: 0
+  few_shot_k: 0
+  few_shot_seed: 13
+inference:
+  model: m1b_mix7b_fp8
+  base_url: http://localhost:8000/v1
+  temperature: 0.0
+  max_tokens: 512
+  extra_body: {}
+  concurrency: 16
+  timeout_s: 120.0
+  max_retries: 3
+  retry_on_error: false
+evaluation:
+  gold_timeout_s: 120.0
+  exec_timeout_s: 5.0
+  max_result_rows: 100000
+  exec_workers: 8
+  mlflow_tracking_uri: sqlite:///mlflow.db
+  row_compare: multiset
+training:
+  base_model: Qwen/Qwen2.5-Coder-3B-Instruct
+  load_in_4bit: true
+  max_seq_length: 2048
+  r: 16
+  lora_alpha: 16
+  lora_dropout: 0.0
+  target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  - gate_proj
+  - up_proj
+  - down_proj
+  learning_rate: 0.0002
+  num_train_epochs: 2.0
+  max_steps: null
+  train_fraction: 1.0
+  per_device_train_batch_size: 8
+  gradient_accumulation_steps: 2
+  warmup_ratio: 0.03
+  lr_scheduler_type: cosine
+  optim: adamw_8bit
+  weight_decay: 0.0
+  val_fraction: 0.0
+  eval_steps: 200
+  train_sample_rows: 3
+  train_sample_rows_mix: 0.0
+  longest_first: false
+  logging_steps: 10
+  save_steps: 200
+  seed: 13
+  output_dir: adapters
+run:
+  experiment_name: m1a
+  run_name: m1_m1b_mix7b_fp8__zero__spider
+  reference_run: null
+  results_dir: results
+  test_once: false

@@ -9,8 +9,10 @@ W4A16_ASYM quantization (group 128, lm_head kept in bf16; layers onloaded to the
 time) calibrated on outputs/calib/<calib>.jsonl -> models/<name>-awq/ (compressed-tensors,
 served by vLLM as `make serve MODEL=/models/<name>-awq`).
 Params: --base, --adapter (omit to quantize the base alone), --calib, --out, --n (calibration
-samples, typical 256), --max-len (tokens per sample, typical 2048; longer samples are skipped,
-not truncated, so every sample keeps its SQL answer).
+samples, typical 128), --max-len (tokens per sample, typical 1024; longer samples are skipped,
+not truncated, so every sample keeps its SQL answer). Effect: one layer's cached activations
+over all samples must fit in VRAM; on a 7B with 16 GB, 256 x 2048 (~190k tokens) spilled into
+shared memory and ran ~300x slower, 128 x 1024 (~67k tokens) fits.
 Caveat: the adapter was trained on the NF4 base and is folded into bf16 weights (standard
 practice; the small mismatch is part of what the dev eval measures).
 Runs in its own environment (llm-compressor pins its own torch / transformers):
@@ -32,8 +34,8 @@ def main() -> None:
     parser.add_argument("--adapter", type=Path, default=None)
     parser.add_argument("--calib", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
-    parser.add_argument("--n", type=int, default=256)
-    parser.add_argument("--max-len", type=int, default=2048)
+    parser.add_argument("--n", type=int, default=128)
+    parser.add_argument("--max-len", type=int, default=1024)
     args = parser.parse_args()
 
     import torch

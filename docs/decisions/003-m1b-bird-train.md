@@ -60,7 +60,9 @@ bootstrap CIs on `bird_diag` are indicative only.
    7B dev run used retry without example rows. Here m1b_mix with rows3 + retry scores 48.8 and
    7B with retry scores 48.4 (McNemar p = 1.0, 30 questions each way). The same-variant
    comparison is on the test set: 52.2 vs 51.4 (p = 0.89). The 3B is served in bf16, the 7B
-   and 14B as AWQ 4-bit. 14B is still 9 points ahead.
+   and 14B as AWQ 4-bit. 14B is still 9 points ahead. *Added 2026-10-25:* the same-variant
+   dev run of the 7B (rows3 + retry) scores 51.6, 2.8 above m1b_mix (p = 0.44). So "level
+   within noise" holds on both sets, and "better" holds on neither (see 004).
 3. **Spider is not hurt.** m1b_mix vs the Spider-only M0 adapter: −0.6 (zero) and −1.7
    (rows3 + retry), neither significant. One adapter now covers both benchmarks.
 4. **Schema errors drop most.** Share of `no such column` among `bird_diag` predictions:
@@ -167,5 +169,6 @@ compare models within a set, not across sets.
 - **7B fine-tune** with the same data and settings (`m1b/train/mix7b.yaml`), served as
   merge → AWQ 4-bit. The base 7B is quantized with the same script and calibration set
   (`scripts/merge_awq.py` without `--adapter`), so the two differ only by the fine-tune. Question:
-  does the BIRD-train gain on top of a 7B base close the gap to 14B?
+  does the BIRD-train gain on top of a 7B base close the gap to 14B? **Answer in
+  [004](004-m1b-7b-finetune.md): no. The 7B gains 0 on BIRD dev, also when served in FP8.**
 - Haiku (one-shot, `claude -p`) as a closed-model reference, and a Gradio demo.

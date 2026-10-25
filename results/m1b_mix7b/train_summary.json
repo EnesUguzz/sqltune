@@ -1,0 +1,23 @@
+{
+  "runtime_s": 11018.531600561,
+  "steps": 932,
+  "steps_per_s": 0.08458477352395558,
+  "tokens_per_s": 1829.1567089551063,
+  "peak_vram_gib": 8.577555179595947,
+  "final_train_loss": 0.0899735441983002,
+  "trainable_params": 40370176,
+  "trainable_ratio": 0.00918894357332759,
+  "n_records": 14903,
+  "n_dropped_overlong": 0,
+  "final_eval_loss": 0.11330504715442657,
+  "n_dropped_overlong_spider": 0,
+  "n_dropped_overlong_bird": 0,
+  "n_rows_fallback_spider": 0,
+  "n_rows_fallback_bird": 267,
+  "n_train_spider": 6540,
+  "n_val_spider": 366,
+  "n_train_bird": 8363,
+  "n_val_bird": 472,
+  "mlflow_run_id": "30fdb1f4eec04bfbbd5044084a5cf5a9",
+  "dropped_by_db": {}
+}
