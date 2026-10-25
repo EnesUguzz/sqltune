@@ -67,7 +67,8 @@ def download(
     from sqltune.data.download import download_bird_train
 
     train_root = download_bird_train(cfg.data)
-    train = load_bird_train(cfg.data)
+    # before `make dataset-review` there is no gold_failures.json yet: count every question
+    train = load_bird_train(cfg.data.model_copy(update={"bird_train_skip_failing_gold": False}))
     typer.echo(
         f"BIRD train: {len(train)} questions on {len({e.db_id for e in train})} DBs in {train_root}"
     )

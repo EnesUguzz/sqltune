@@ -4,7 +4,7 @@ LORA ?=
 # Seconds to wait for vLLM to report healthy (first start downloads the model).
 SERVE_WAIT ?= 900
 
-.PHONY: setup test lint format check-env serve serve-down download eval train m1-train serve-multi m1-eval summarize
+.PHONY: setup test lint format check-env serve serve-down download eval train m1-train serve-multi m1-eval summarize dataset-review
 
 setup:
 	uv sync --extra train

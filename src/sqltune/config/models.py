@@ -102,7 +102,7 @@ class DataConfig(_Section):
         description=(
             "What: skip BIRD train questions listed in bird_train/gold_failures.json (gold SQL "
             "that errors, times out or returns too many rows; written by "
-            "`make bird-train-gold`). Typical: true. Effect: the model is not trained to "
+            "`make dataset-review`; loading fails if the file is missing). Typical: true. Effect: the model is not trained to "
             "reproduce SQL that does not run."
         ),
     )

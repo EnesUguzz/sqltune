@@ -27,6 +27,7 @@ def make_bird_train(data_dir: Path, n_dbs: int = 4, per_db: int = 3) -> DataConf
                 }
             )
     (root / "train.json").write_text(json.dumps(records), encoding="utf-8")
+    (root / GOLD_FAILURES_FILE).write_text("[]", encoding="utf-8")  # as after dataset-review
     return DataConfig(data_dir=data_dir)
 
 
@@ -48,6 +49,13 @@ def test_failing_gold_ids_are_skipped(tmp_path: Path) -> None:
     ids = [e.id for e in load_bird_train(cfg)]
     assert "birdtrain-00001" not in ids
     assert len(ids) == 11
+
+
+def test_missing_gold_failures_file_is_an_error(tmp_path: Path) -> None:
+    cfg = make_bird_train(tmp_path / "data")
+    (cfg.data_dir / "bird_train" / GOLD_FAILURES_FILE).unlink()
+    with pytest.raises(FileNotFoundError, match="dataset-review"):
+        load_bird_train(cfg)
 
 
 def test_table_overlap_flags_same_tables(tmp_path: Path) -> None:

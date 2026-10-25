@@ -27,7 +27,12 @@ def load_bird_train(cfg: DataConfig) -> list[Example]:
     records = json.loads((root / QUESTIONS_FILE).read_text(encoding="utf-8"))
     skip: set[str] = set()
     failures = root / GOLD_FAILURES_FILE
-    if cfg.bird_train_skip_failing_gold and failures.exists():
+    if cfg.bird_train_skip_failing_gold:
+        if not failures.exists():
+            raise FileNotFoundError(
+                f"{failures} is missing: run `make dataset-review` first, or set "
+                "data.bird_train_skip_failing_gold: false to train on failing gold too"
+            )
         skip = set(json.loads(failures.read_text(encoding="utf-8")))
     examples = [
         Example(
