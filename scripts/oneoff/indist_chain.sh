@@ -4,7 +4,7 @@
 # 2. zero-shot EX on BIRD validation DBs and 250 BIRD training questions, base vs fine-tune,
 #    3B (bf16 + LoRA) and 7B (FP8), via scripts/eval_in_distribution.py
 # 3. base 3B with the SQLite-rules system prompt on dev (experiments/configs/m1b/sqlite_rules)
-cd ~/code/sqltune
+cd "$(dirname "$0")/../.." && mkdir -p outputs
 log=outputs/indist.log
 E=experiments/configs
 echo "### start $(date +%H:%M)" >> $log

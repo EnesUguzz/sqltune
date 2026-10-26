@@ -48,8 +48,12 @@ one gold query runs longer than the 120 s gold timeout and is left out for every
   near ties at ambiguous forks (`LEFT` vs `INNER`, ×100 or not). With 8 samples, the fine-tune
   does raise pass@8 on Mini-Dev (+5.6, p = 0.03): the right answer is reachable, not chosen.
 - **Sampling leaves room.** pass@8 is 12-19 points above greedy EX for every model; execution
-  majority voting gives the 7B +6.0 on BIRD dev (no training, 8x inference). That gap is what
-  a planned GRPO run on the 3B targets.
+  majority voting gives the 7B +6.0 on BIRD dev (no training, 8x inference).
+- **Why no RL (GRPO) here.** For the 3B fine-tune on BIRD dev, voting over 8 samples reaches
+  only 47.2 against 46.0 greedy: the correct answers in pass@8 (61.2) are scattered minority
+  samples, not a consistent answer that greedy decoding misses. RL with an execution reward
+  mostly moves greedy towards the voting score, so the expected gain (about +1 to +4) is below
+  what 250 questions can detect. RL is left for a project with a richer reward signal.
 - **A prompt does not replace the 3B fine-tune.** A system prompt with SQLite rules (quoting,
   table prefixes, `strftime`, `CAST`) is no better for the base 3B on BIRD dev (−0.8, n.s.)
   and worse on Spider dev (−3.8, p = 3e-4); the fine-tune stays +13 above it on BIRD dev.

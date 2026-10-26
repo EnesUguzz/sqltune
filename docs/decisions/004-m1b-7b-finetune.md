@@ -200,9 +200,12 @@ errors, so if anything this check is biased in the prompt's favour.
 - Options to lift the 7B, none started: more database diversity (BIRD train has 69 DBs;
   cross-database transfer scales with databases, not questions); schema pruning / linking
   at inference time (the largest error class in 003); majority voting (+6.0, no training);
-  or RL on execution feedback (GRPO). pass@8 shows the room for RL; a first GRPO run is
-  planned on the 3B, which fits the 16 GB card with long BIRD prompts and 8 samples per
-  question.
+  or RL on execution feedback (GRPO).
+- GRPO on the 3B was considered and not run. pass@8 is 15 points above greedy, but voting
+  is only +1.2 (47.2 vs 46.0): the correct samples are scattered minorities. RL with a
+  verifiable reward mostly lifts greedy towards the voting score, so the expected gain
+  (about +1 to +4) is below the ±5-point resolution of a 250-question set. It was not worth
+  the ~5 h run; RL is left for a project with a richer reward signal.
 
 ## Caveats
 

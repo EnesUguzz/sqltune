@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One-off driver: pass@8 and majority voting (T 0.7) for base and fine-tune, 3B (bf16 + LoRA)
 # and 7B (FP8), on bird_diag and the BIRD validation DBs, via scripts/pass_at_k.py.
-cd ~/code/sqltune
+cd "$(dirname "$0")/../.." && mkdir -p outputs
 log=outputs/passk.log
 E=experiments/configs
 pk () {  # eval config, run prefix

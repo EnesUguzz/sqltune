@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One-off driver for the M1b test-once runs (Task 6): 3B + adapters, then 7B, then 14B.
-cd ~/code/sqltune
+cd "$(dirname "$0")/../.." && mkdir -p outputs
 log=outputs/final_eval.log
 echo "### chain start $(date +%H:%M)" >> $log
 make --no-print-directory serve-down >> $log 2>&1

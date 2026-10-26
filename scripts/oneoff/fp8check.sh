@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One-off: is the 7B fine-tune's small BIRD gain an AWQ artefact? Serve the merged bf16 fine-tune
 # and the bf16 base with vLLM online FP8 (8-bit weights, near lossless) and eval both on dev.
-cd ~/code/sqltune
+cd "$(dirname "$0")/../.." && mkdir -p outputs
 log=outputs/fp8check.log
 run () {  # model, served name, config dir
   make --no-print-directory serve-down >> $log 2>&1

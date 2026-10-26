@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # One-off driver for the M1a eval matrix (server for 3B+adapters is already up).
-cd ~/code/sqltune
+cd "$(dirname "$0")/../.." && mkdir -p outputs
 log=outputs/m1_eval.log
 echo "### chain start $(date +%H:%M)" >> $log
 make --no-print-directory m1-eval GROUP=base3b >> $log 2>&1

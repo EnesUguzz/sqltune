@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # One-off overnight driver: after m1b_mix7b training, merge+AWQ the fine-tune and the base 7B
 # (same script, same calibration), then dev evals of both and the official 7B AWQ rows3retry.
-cd ~/code/sqltune
+cd "$(dirname "$0")/../.." && mkdir -p outputs
 log=outputs/chain7b.log
 echo "### chain7b start $(date +%H:%M)" >> $log
 while pgrep -f "[s]qltune train" > /dev/null; do sleep 60; done
