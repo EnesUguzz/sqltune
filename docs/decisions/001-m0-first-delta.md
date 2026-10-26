@@ -31,7 +31,9 @@ on 20 databases and contains paraphrase pairs, so the honest interval resamples 
 
 Training: 866 steps in 26.4 min (0.55 steps/s) on an RTX 5080. Peak VRAM was 3.5 GiB and
 logged loss went from 0.36 to ~0.03; `final_train_loss` in `train_summary.json` (0.08) is the
-average over the whole run. 1.7 % of the parameters are trainable.
+average over the whole run. 29.9 M parameters are trainable, 0.97 % of the 3.09 B model (`trainable_ratio` in
+train_summary.json reads 1.7 % because it counts the packed 4-bit weights, two values per
+element).
 Latency is indicative only: it comes from the eval run, not from a controlled benchmark
 (the M1 bench will measure it properly).
 

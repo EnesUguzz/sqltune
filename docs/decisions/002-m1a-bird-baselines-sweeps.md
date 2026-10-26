@@ -11,7 +11,7 @@ touched). Spider test and `bird_holdout` stay unused until the final M1b model.
 - Base 3B (Qwen2.5-Coder-3B-Instruct) × 5 prompt variants: zero, 3 few-shot examples,
   3 example rows per table, one retry on execution error, rows + retry.
 - 10 adapters, all trained on Spider train only: M0, learning curve (1/8, 1/4, 1/2, all),
-  `others` (+ train_others), `ep3` (3 epochs), `lora16` (rank 16), seeds 2 and 3.
+  `others` (+ train_others), `ep3` (3 epochs), `lora16` (LoRA on a bf16 base instead of QLoRA; rank stays 16), seeds 2 and 3.
 - Qwen2.5-Coder 7B and 14B (AWQ 4-bit), zero and retry.
 
 EX = execution accuracy, column-order tolerant (strict, comparable to published BIRD numbers, is in `results/SUMMARY.md`). Δ = against base/zero on the same set with a
