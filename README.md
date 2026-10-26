@@ -143,6 +143,11 @@ data did (m1b_mix: 46.0 on bird_diag vs 33.6 for base).
 MLflow's compare view for M0, the 1-epoch Spider run and m1b_mix: parameters that differ
 and final metrics.
 
+![MLflow eval run](docs/img/mlflow_eval_run.png)
+
+One eval run (m1b_mix, zero-shot, BIRD dev): the tags link it to the training run that
+produced the adapter; the metrics split failures by type (wrong result, SQL error, timeout).
+
 Training and evaluation build their prompts with the same function (`build_messages`). The
 token-level check below was run for M0 only, on 11 Spider dev prompts (zero-shot, no evidence,
 no example rows): `uv run --extra train python scripts/check_tokenize.py` (with
