@@ -93,12 +93,61 @@ zero-shot; 7B in FP8; `paired_stats.py indist`):
 | 472 validation questions (3 unseen BIRD-train DBs) | 36.0 | 46.8 | +10.8 (7e-7) | 56.4 | 58.5 | +2.1 (0.25) |
 | 250 `bird_diag` questions (Mini-Dev) | 33.6 | 46.0 | +12.4 (9e-5) | 48.8 | 48.8 | 0.0 (1.0) |
 
-For the 3B the gain is about the same everywhere: on questions it trained on, on unseen
-databases of the same distribution and on Mini-Dev. For the 7B it shrinks step by step:
-+7 on its own training questions, +2 on unseen databases of the same distribution, 0 on
-Mini-Dev. Even on questions it was trained on, the 7B gains only 7 points, while its loss
-drops 45%. This is consistent with (not proof of) the 7B mostly learning how the gold SQL is written (aliases, layout,
-which of several equivalent forms), which lowers loss but rarely changes the result.
+For the 3B the gain is similar everywhere (+16 / +11 / +12). For the 7B it is +7 on its own
+training questions, +2 on unseen databases of the same distribution (p = 0.25) and 0 on
+Mini-Dev; the drop from +7 to +2 is not itself tested, so read it as "small everywhere,
+significant only on seen questions", not as a measured slope.
+
+**Why does the 7B miss ~28% of its own training questions?** With 1 epoch every question
+is seen once (one gradient contribution at batch 16), so "training questions" are not a
+memorization test: they behave like new questions on familiar databases. The training loss
+of each fresh batch at the end of the run (0.078) is close to the validation loss (0.113).
+Three measurements point the same way:
+
+- **Style, not correctness.** On the 472 unseen validation questions the 7B's answers that
+  match the gold string exactly rise from 56 to 79 (whitespace and case normalized), while EX
+  rises by only 10 questions net.
+  The 45% loss drop is mostly the gold writing style (aliases, layout, which of several
+  equivalent forms); EX already accepts equivalent SQL.
+- **Near ties at ambiguous forks** (`scripts/fork_margin.py`, teacher forcing on the
+  training-time NF4 model + LoRA, 71 failed training questions). At the first token where
+  gold and the model's own SQL diverge, p(gold token) has median 0.063 for the base and
+  0.196 for the fine-tune. Fine-tune buckets: ≥ 0.2: 35, 0.05-0.2: 17, < 0.05: 19 (base 21 /
+  18 / 32). Typical forks: `LEFT` 0.35 vs `INNER` 0.65, `COUNT(*)` vs `COUNT(T1.id)`, ×100 or
+  not; low-probability cases include gold conventions such as `market_cap` (0.001) for "how
+  much was Bitcoin worth" where the model says `price`. Gold scores higher than the model's
+  own whole answer in only 7 of 71. The first fork is sometimes cosmetic (alias order), so
+  these numbers are approximate. The fine-tune moved the model toward gold, not far enough to
+  flip greedy answers; more epochs would flip seen questions by memorizing them.
+- **More epochs did not help before.** On the 3B, the Spider-only run with 3 epochs scored
+  +0.4 on Spider and −1.5 on `bird_diag` against 2 epochs (002).
+
+"Undertrained" is right for fitting the training set, not for generalization: validation
+loss is flat from step 200 of 932 (with the caveat that within one run this is confounded
+with the learning-rate schedule, so it is not a clean data-scaling curve).
+
+**pass@8 and majority voting** (`scripts/pass_at_k.py`, 8 samples at temperature 0.7,
+zero-shot; vote = the answer of the largest group of samples with the same result set):
+
+| model | set | greedy | pass@8 | vote (vs greedy) |
+|---|---|---|---|---|
+| 3B base | bird_diag | 33.6 | 48.4 | 38.4 (+19 / −7, p = 0.03) |
+| 3B fine-tune | bird_diag | 46.0 | 61.2 | 47.2 (+19 / −16, p = 0.74) |
+| 7B base (FP8) | bird_diag | 48.8 | 61.2 | 52.4 (+11 / −2, p = 0.02) |
+| 7B fine-tune (FP8) | bird_diag | 48.8 | 66.8 | 54.8 (+22 / −7, p = 0.008) |
+| 3B base | BIRD val (472) | 36.0 | 54.9 | 44.7 (+57 / −16, p = 2e-6) |
+| 3B fine-tune | BIRD val | 46.8 | 62.3 | 50.2 (+38 / −22, p = 0.05) |
+| 7B base (FP8) | BIRD val | 56.4 | 69.9 | 59.3 (+21 / −7, p = 0.01) |
+| 7B fine-tune (FP8) | BIRD val | 58.5 | 72.7 | 61.0 (+24 / −12, p = 0.07) |
+
+- The 7B fine-tune does not change greedy EX on `bird_diag` (0.0) but raises pass@8 by +5.6
+  (25 / 11, p = 0.03). The correct answer enters the model's distribution without becoming
+  its top choice. Weak evidence (one of many comparisons), and part of it is diversity: the
+  fine-tune's single samples are slightly less accurate (43.0 vs 46.2) and it is right on
+  all 8 samples for fewer questions (35 vs 63).
+- pass@8 is 12-19 points above greedy for every model, and majority voting recovers only
+  part of it (none for the 3B fine-tune). That gap is the room RL on execution feedback
+  (GRPO) could use; voting is a no-training gain for the 7B (+6.0 on `bird_diag`, 8x cost).
 
 **Can a prompt replace the 3B fine-tune?** The independent review noted that half of the
 3B's BIRD gain comes from execution errors that disappear (SQLite dialect, unquoted names
@@ -131,10 +180,11 @@ errors, so if anything this check is biased in the prompt's favour.
    share 30% → 14%, 003), and that skill transfers to any database. The 7B base already has
    it: its base validation loss (0.218) is close to the fine-tuned 3B (0.204), and on the 250
    training questions the 7B base (64.4) already matches the fine-tuned 3B (64.8). What the fine-tune adds on top
-   is mostly gold-style writing, which lowers loss but not errors in results; the small
-   real EX gain fades with distance from the training data (+7 seen, +2 unseen DBs, 0
-   Mini-Dev). Not ruled out: more epochs or a larger rank might raise the 7B on its training
-   questions, but that gain would have to survive the same fade to matter.
+   is mostly gold-style writing, which lowers loss but not errors in results; the real EX
+   gain is small everywhere (+7 seen, +2 unseen DBs, 0 Mini-Dev greedy; +5.6 pass@8). More
+   epochs would mostly memorize near-tie forks (see the fork measurement). A larger rank
+   was not tried; it would need alpha scaled with it (r 64 with alpha 16 cuts the LoRA scale
+   to 0.25, i.e. a lower effective learning rate).
 5. **Fair dev comparison for 003 finding 2.** With the same variant (rows3 + retry), the 3B
    fine-tune is 2.8 points below the 7B on `bird_diag` (p = 0.44). On the test set it was
    0.8 above (p = 0.89). Both say "level with the 7B within noise", not "better".
@@ -147,9 +197,12 @@ errors, so if anything this check is biased in the prompt's favour.
   noise of the 4-bit 7B base, and a prompt cannot do the same", and "the same recipe does not
   lift the 7B" is the honest second half. For a 7B, this data is worth little; for a 3B it is
   the difference between below-7B and 4-bit-7B-level BIRD accuracy at less than half the size.
-- Options to lift the 7B, none started: more epochs or a higher LoRA rank; harder or
-  cleaner BIRD data; schema pruning / linking at inference time (the largest error class in
-  003); or RL on execution feedback (GRPO, planned as optional M2).
+- Options to lift the 7B, none started: more database diversity (BIRD train has 69 DBs;
+  cross-database transfer scales with databases, not questions); schema pruning / linking
+  at inference time (the largest error class in 003); majority voting (+6.0, no training);
+  or RL on execution feedback (GRPO). pass@8 shows the room for RL; a first GRPO run is
+  planned on the 3B, which fits the 16 GB card with long BIRD prompts and 8 samples per
+  question.
 
 ## Caveats
 

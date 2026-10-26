@@ -41,10 +41,15 @@ one gold query runs longer than the 120 s gold timeout and is left out for every
 - **The same recipe does not lift the 7B** (dev sets, [004](docs/decisions/004-m1b-7b-finetune.md)).
   No detectable BIRD gain against its own base: +0.4 with AWQ 4-bit and 0.0 with FP8 (95% CI
   about ±5.5). The 3B gain minus the 7B gain on the same questions is **+10.4
-  (95% CI +3.3 to +17.5)**: the 3B gain is significantly larger (question-level CI, one dev set). The 7B did learn:
-  its validation loss drops 45% (3B: 39%), and it gains +7 EX on questions it trained on, but
-  only +2 on unseen databases of the same distribution and 0 on Mini-Dev. The 3B gains
-  +11 to +16 on all of them.
+  (95% CI +3.3 to +17.5)**: the 3B gain is significantly larger (question-level CI, one dev set).
+  The 7B did learn, mostly the gold writing style: validation loss drops 45%, exact gold-string
+  matches on unseen databases rise from 56 to 79, but EX gains only +7 on questions it trained
+  on (seen once, 1 epoch), +2 on unseen databases and 0 on Mini-Dev. Its failures are mostly
+  near ties at ambiguous forks (`LEFT` vs `INNER`, ×100 or not). With 8 samples, the fine-tune
+  does raise pass@8 on Mini-Dev (+5.6, p = 0.03): the right answer is reachable, not chosen.
+- **Sampling leaves room.** pass@8 is 12-19 points above greedy EX for every model; execution
+  majority voting gives the 7B +6.0 on BIRD dev (no training, 8x inference). That gap is what
+  a planned GRPO run on the 3B targets.
 - **A prompt does not replace the 3B fine-tune.** A system prompt with SQLite rules (quoting,
   table prefixes, `strftime`, `CAST`) is no better for the base 3B on BIRD dev (−0.8, n.s.)
   and worse on Spider dev (−3.8, p = 3e-4); the fine-tune stays +13 above it on BIRD dev.
