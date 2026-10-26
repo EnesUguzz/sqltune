@@ -97,6 +97,10 @@ def build_requests(examples: list[Example], cfg: AppConfig) -> list[list[dict[st
 
 def run_eval(cfg: AppConfig, backend: Backend | None = None) -> Path:
     examples = load_examples(cfg)
+    if backend is None and cfg.inference.backend == "claude_cli":
+        from sqltune.inference.claude_cli import ClaudeCLIBackend
+
+        backend = ClaudeCLIBackend(cfg.inference)
     backend = backend or OpenAICompatBackend(cfg.inference)
     out = cfg.run.results_dir / cfg.run.run_name
     out.mkdir(parents=True, exist_ok=True)

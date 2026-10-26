@@ -42,10 +42,12 @@ def main() -> None:
     from sqltune.config.loader import load_config
     from sqltune.data.bird_train import load_bird_train
     from sqltune.prompting.builder import build_messages
-    from sqltune.training.sft_data import to_sft_record
 
     cfg = load_config(args.train_config)
-    rows = [json.loads(x) for x in Path(f"results/{args.run}/predictions.jsonl").open()]
+    rows = [
+        json.loads(x)
+        for x in Path(f"results/{args.run}/predictions.jsonl").read_text().splitlines()
+    ]
     rows = [
         r
         for r in rows
@@ -69,7 +71,7 @@ def main() -> None:
     def token_logprobs(m: Any, prompt: list[dict[str, str]], sql: str) -> tuple[list[int], Any]:
         """Completion token ids and their log-prob distributions (k x vocab)."""
         p = ids_of(prompt, gen=True)
-        full = ids_of(prompt + [{"role": "assistant", "content": f"```sql\n{sql.strip()}\n```"}])
+        full = ids_of([*prompt, {"role": "assistant", "content": f"```sql\n{sql.strip()}\n```"}])
         assert full[: len(p)] == p
         k = len(full) - len(p)
         with torch.no_grad():
@@ -110,7 +112,11 @@ def main() -> None:
         ratio = [x["p_gold_at_fork"] / max(x["p_pred_at_fork"], 1e-12) for x in forks]
         print(f"\n== {name}: {len(res)} questions, {len(forks)} with a diverging token")
         print(f"  p(gold token) at first fork: median {statistics.median(pg):.3f}")
-        for lo, hi, label in ((0.2, 1.01, ">= 0.2"), (0.05, 0.2, "0.05-0.2"), (0.0, 0.05, "< 0.05")):
+        for lo, hi, label in (
+            (0.2, 1.01, ">= 0.2"),
+            (0.05, 0.2, "0.05-0.2"),
+            (0.0, 0.05, "< 0.05"),
+        ):
             print(f"    {label:9} {sum(lo <= v < hi for v in pg)}")
         print(
             f"  gold within 3x of own choice at fork: {sum(r >= 1 / 3 for r in ratio)} / {len(forks)}"

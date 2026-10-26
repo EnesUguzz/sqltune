@@ -38,6 +38,7 @@ EX = execution accuracy, column-order tolerant (strict in brackets). Δ is again
 | base | retry | spider | 1034 | 68.4 (64.7) | +0.3 [-0.5, +1.1] | 9.8 | 8.8 | 114 | 451 | — | — |
 | base | zero | spider | 1034 | 68.1 (64.5) | — | 10.6 | 9.6 | 0 | 373 | — | — |
 | base_sqliterules | zero | spider | 1034 | 64.3 (61.0) | -3.8 [-7.2, -1.0] | 13.7 | 12.9 | 0 | 463 | — | — |
+| haiku | zero | birddiag | 250 | 60.8 (60.0) | +27.2 [+21.5, +35.1] | 0.0 | 0.0 | 0 | 4370 | — | — |
 | qwen14b | retry | birddiag | 250 | 57.6 (56.8) | +24.0 [+19.0, +27.9] | 0.4 | 0.4 | 12 | 2264 | — | — |
 | qwen14b | zero | birddiag | 250 | 55.6 (54.8) | +22.0 [+17.5, +25.9] | 4.8 | 3.6 | 0 | 2243 | — | — |
 | m1b_mix7b_fp8 | rows3retry | birddiag | 250 | 53.2 (52.4) | +19.6 [+16.1, +23.2] | 3.6 | 2.4 | 13 | 1098 | — | — |
@@ -90,6 +91,7 @@ EX = execution accuracy, column-order tolerant (strict in brackets). Δ is again
 | qwen7b_fp8 | zero | birdval | 472 | 56.4 (55.9) | +20.3 [+11.8, +26.2] | 7.2 | 5.7 | 0 | 866 | — | — |
 | m1b_mix | zero | birdval | 472 | 46.8 (46.8) | +10.8 [+7.8, +15.2] | 12.5 | 11.0 | 0 | 882 | 93 | 3.9 |
 | base | zero | birdval | 472 | 36.0 (35.0) | — | 25.2 | 19.9 | 0 | 771 | — | — |
+| haiku | zero | spider200 | 200 | 78.5 (73.5) | — | 0.5 | 0.0 | 0 | 3935 | — | — |
 | qwen14b | rows3retry | spidertest | 2147 | 85.8 (80.9) | +14.1 [+11.6, +16.7] | 0.1 | 0.1 | 9 | 1611 | — | — |
 | qwen7b | rows3retry | spidertest | 2147 | 82.6 (77.4) | +10.9 [+8.4, +13.2] | 0.8 | 0.7 | 48 | 353 | — | — |
 | qwen14b | zero | spidertest | 2147 | 82.5 (77.7) | +10.8 [+8.5, +13.1] | 0.5 | 0.4 | 0 | 1245 | — | — |

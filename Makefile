@@ -4,7 +4,7 @@ LORA ?=
 # Seconds to wait for vLLM to report healthy (first start downloads the model).
 SERVE_WAIT ?= 900
 
-.PHONY: setup test lint format check-env serve serve-down download eval train m1-train serve-multi m1-eval summarize dataset-review
+.PHONY: setup test lint format check-env serve serve-down download eval train m1-train serve-multi m1-eval summarize dataset-review demo
 
 setup:
 	uv sync --extra train
@@ -75,6 +75,9 @@ m1-eval:  ## run every eval config of GROUP against the running server; failures
 	  echo "=== $$f $$(date +%H:%M)"; \
 	  uv run sqltune eval --config $$f 2>&1 | grep -E "^results|WARNING|Error" || echo "    FAILED $$f"; \
 	done
+
+demo:  ## Gradio app on :7860 against the running vLLM server (make serve-multi ADAPTERS=m1b_mix)
+	uv run --extra demo python -m sqltune.demo
 
 summarize:  ## one table over every results/m1_* run -> results/SUMMARY.md
 	uv run sqltune summarize --out results/SUMMARY.md

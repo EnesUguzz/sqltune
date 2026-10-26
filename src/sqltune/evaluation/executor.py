@@ -52,7 +52,10 @@ def execute(db_path: Path, sql: str, cfg: EvalConfig) -> ExecResult:
                     error=f"more than {cfg.max_result_rows} rows",
                     elapsed_ms=elapsed(),
                 )
-        return ExecResult(ok=True, rows=[tuple(r) for r in rows], elapsed_ms=elapsed())
+        columns = [d[0] for d in cur.description or []]
+        return ExecResult(
+            ok=True, rows=[tuple(r) for r in rows], columns=columns, elapsed_ms=elapsed()
+        )
     except sqlite3.Error as exc:
         timed_out = time.monotonic() > deadline and "interrupt" in str(exc).lower()
         return ExecResult(

@@ -211,6 +211,22 @@ class PromptConfig(_Section):
 
 
 class InferenceConfig(_Section):
+    backend: Literal["openai", "claude_cli"] = Field(
+        "openai",
+        description=(
+            "What: how requests are sent. 'openai' = OpenAI-compatible server (vLLM); "
+            "'claude_cli' = one `claude -p` call per question on the user's Claude "
+            "subscription (closed-model reference; system + user turn only). Typical: openai. "
+            "Effect: picks the backend; base_url / extra_body only apply to 'openai'."
+        ),
+    )
+    cli_command: list[str] = Field(
+        default_factory=lambda: ["claude"],
+        description=(
+            "What: command that starts the Claude Code CLI (claude_cli backend only). "
+            "Typical: ['claude']. Effect: none on metrics."
+        ),
+    )
     model: str = Field(
         "Qwen/Qwen2.5-Coder-3B-Instruct",
         description=(

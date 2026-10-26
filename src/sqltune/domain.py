@@ -23,6 +23,7 @@ Outcome = Literal[
 class ExecResult(BaseModel):
     ok: bool
     rows: list[tuple[Any, ...]] | None = None
+    columns: list[str] | None = None  # result column names (shown by the demo)
     error_type: Literal["exec_error", "timeout", "too_many_rows"] | None = None
     error: str | None = None
     elapsed_ms: float

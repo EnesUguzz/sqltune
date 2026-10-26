@@ -53,6 +53,11 @@ one gold query runs longer than the 120 s gold timeout and is left out for every
 - **A prompt does not replace the 3B fine-tune.** A system prompt with SQLite rules (quoting,
   table prefixes, `strftime`, `CAST`) is no better for the base 3B on BIRD dev (−0.8, n.s.)
   and worse on Spider dev (−3.8, p = 3e-4); the fine-tune stays +13 above it on BIRD dev.
+- **Closed-model reference: Claude Haiku** (via `claude -p`, same prompt, zero-shot, dev
+  sets only). BIRD dev 60.8 vs 46.0 for the 3B fine-tune (+14.8, p = 9e-5) and 55.6 for the
+  14B (+5.2, p = 0.11). On 200 Spider dev questions it is level with the 3B fine-tune
+  (78.5, +1.5, p = 0.76). The open 3B closes the gap on Spider, not on BIRD. Haiku may also
+  have seen these public benchmarks in training.
 
 How it got there, one decision note per milestone:
 [001](docs/decisions/001-m0-first-delta.md) first fine-tune on Spider ·
@@ -89,6 +94,18 @@ not a gain") was committed in the plan before the M1b training run.
   differences against the same base model are still valid.
 - BIRD gold SQL has known semantic errors. In a hand-labelled sample of 40 m1b_mix failures,
   6 were gold problems or ambiguous questions (003).
+
+## Demo
+
+![Gradio demo](docs/img/demo.png)
+
+`make serve-multi ADAPTERS="m1b_mix"`, then `make demo` and open http://localhost:7860. Pick
+one of the bundled Spider / BIRD databases or upload your own `.sqlite` file: the schema is
+read from the file (the same code that builds training and eval prompts), so nothing has to
+be typed by hand. The model writes the SQL, the app runs it read-only (with the evaluator's
+timeout and row cap) and retries once with the SQLite error if it fails. Questions in
+English work best (all training data is English). Expect the errors measured above, e.g.
+"which driver won the most races in 2009" can come back as "took part in the most races".
 
 ## Experiment tracking
 

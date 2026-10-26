@@ -1,0 +1,17 @@
+# Claude Haiku via claude -p (closed-model reference), zero-shot; from m1b--base__zero__spider.yaml
+# model haiku | prompt variant zero | eval set spider
+extends: ../../base.yaml
+run:
+  experiment_name: m1a
+  run_name: m1_haiku__zero__spider200
+inference:
+  model: haiku
+  backend: claude_cli
+  concurrency: 4
+  timeout_s: 180
+  max_retries: 2
+data:
+  dataset: spider
+  split: dev
+  subset: dev_small
+  dev_small_size: 200

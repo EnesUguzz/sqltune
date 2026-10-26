@@ -7,7 +7,7 @@ errors excluded) -> Δ, fixed / broken, exact McNemar p, Holm-adjusted p within 
 question-level 95% CI and database-cluster bootstrap 95% CI -> markdown rows on stdout.
 The `did` group compares two fine-tune gains (difference in differences), and `perdb`
 prints EX per database.
-Params: group names on the command line (default: all of test, dev7b, sqlite_rules, indist, did, perdb).
+Params: group names on the command line (default: all of test, dev7b, sqlite_rules, haiku, indist, did, perdb).
 Holm adjusts over the comparisons of one group only. Both CIs are rough with 5-6 databases.
 Try: `uv run python scripts/paired_stats.py test`.
 """
@@ -56,6 +56,14 @@ GROUPS: dict[str, list[tuple[str, str, str]]] = {  # (set, run a, run b): a - b
         ("spider", "base_sqliterules__zero", "base__zero"),
         ("spider", "base_sqliterules__rows3retry", "base__rows3retry"),
         ("spider", "m1b_mix__rows3retry", "base_sqliterules__rows3retry"),
+    ],
+    "haiku": [  # Spider: Haiku ran on 200 dev questions; pairs use the shared ids
+        ("birddiag", "haiku__zero", "m1b_mix__zero"),
+        ("birddiag", "haiku__zero", "qwen7b_fp8__zero"),
+        ("birddiag", "haiku__zero", "qwen14b__zero"),
+        ("spider", "haiku__zero@spider200", "m1b_mix__zero"),
+        ("spider", "haiku__zero@spider200", "qwen7b_fp8__zero"),
+        ("spider", "haiku__zero@spider200", "qwen14b__zero"),
     ],
     "indist": [
         ("birdval", "m1b_mix__zero", "base__zero"),
@@ -113,10 +121,16 @@ def mean_ci(d: list[int]) -> tuple[float, float, float]:
     return 100 * m, 100 * (m - 1.96 * sd / math.sqrt(n)), 100 * (m + 1.96 * sd / math.sqrt(n))
 
 
+def _run_split(run: str, split: str) -> tuple[str, str]:
+    """ "name@split" evaluates `name` on another split (e.g. a subset run)."""
+    name, _, own = run.partition("@")
+    return name, own or split
+
+
 def pairs(group: str) -> None:
     lines, ps = [], []
     for split, a, b in GROUPS[group]:
-        ra, rb = load(a, split), load(b, split)
+        ra, rb = load(*_run_split(a, split)), load(*_run_split(b, split))
         if ra is None or rb is None:
             continue
         ca, cb = correct(ra), correct(rb)

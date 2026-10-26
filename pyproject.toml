@@ -29,6 +29,9 @@ train = [
   "bitsandbytes>=0.45",
   "accelerate",
 ]
+demo = [
+    "gradio>=5",
+]
 
 [project.scripts]
 sqltune = "sqltune.cli:app"
